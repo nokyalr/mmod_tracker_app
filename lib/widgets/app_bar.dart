@@ -29,17 +29,18 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       automaticallyImplyLeading: false,
       backgroundColor: backgroundColor,
-      toolbarHeight: 50.0,
+      toolbarHeight: 55.0,
       shape: useBorder
           ? Border(
               bottom: BorderSide(
-                color: Color(0xFFE68C52).withOpacity(0.5),
+                color: const Color(0xFFE68C52).withOpacity(0.5),
                 width: 2.0,
               ),
             )
           : null,
       title: Row(
         children: [
+          // Gambar jika `useImage` true
           if (useImage)
             GestureDetector(
               onTap: () {
@@ -61,11 +62,16 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
             ),
           if (useImage) const SizedBox(width: 10),
-          Text(
-            titleText,
-            style: TextStyle(
-              fontSize: 18,
-              color: textColor,
+
+          Flexible(
+            child: Text(
+              titleText,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+              style: TextStyle(
+                fontSize: 18,
+                color: textColor,
+              ),
             ),
           ),
         ],

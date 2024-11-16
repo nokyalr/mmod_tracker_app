@@ -97,57 +97,63 @@ class UserScreenState extends State<UserScreen> {
                     height: 110,
                   ),
                   const SizedBox(width: 20),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        user['name'] ?? '',
-                        style: const TextStyle(
-                          fontSize: 24,
-                          color: Color(0xFFE68C52),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          user['name'] ?? '',
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          style: const TextStyle(
+                            fontSize: 24,
+                            color: Color(0xFFE68C52),
+                          ),
                         ),
-                      ),
-                      Text(
-                        '@${user['username']}',
-                        style: const TextStyle(
-                          fontSize: 24,
-                          color: Color(0xFFE68C52),
+                        Text(
+                          '@${user['username']}',
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          style: const TextStyle(
+                            fontSize: 24,
+                            color: Color(0xFFE68C52),
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 15),
-                      Row(
-                        children: [
-                          RichText(
-                            text: TextSpan(
-                              text: 'Edit Profile ',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black.withOpacity(0.8),
+                        const SizedBox(height: 15),
+                        Row(
+                          children: [
+                            RichText(
+                              text: TextSpan(
+                                text: 'Edit Profile ',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black.withOpacity(0.8),
+                                ),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    // Navigator.pushReplacement(
+                                    //   context,
+                                    //   PageRouteBuilder(
+                                    //     pageBuilder:
+                                    //         (context, animation1, animation2) =>
+                                    //             ReportScreen(),
+                                    //     transitionDuration: Duration.zero,
+                                    //   ),
+                                    // );
+                                  },
                               ),
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () {
-                                  // Navigator.pushReplacement(
-                                  //   context,
-                                  //   PageRouteBuilder(
-                                  //     pageBuilder:
-                                  //         (context, animation1, animation2) =>
-                                  //             ReportScreen(),
-                                  //     transitionDuration: Duration.zero,
-                                  //   ),
-                                  // );
-                                },
                             ),
-                          ),
-                          const SizedBox(width: 4),
-                          Image.asset(
-                            'assets/images/edit.png',
-                            height: 14,
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
+                            const SizedBox(width: 4),
+                            Image.asset(
+                              'assets/images/edit.png',
+                              height: 14,
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  )
                 ],
               ),
       ),
