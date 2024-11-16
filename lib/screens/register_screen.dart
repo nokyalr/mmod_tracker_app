@@ -73,33 +73,12 @@ class RegisterScreenState extends State<RegisterScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const LoginScreen()),
-                      );
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 20.0),
-                      child: SizedBox(
-                        height: 60,
-                        child: Image.asset(
-                          'assets/images/back.png',
-                          color: const Color(0xFFE68C52),
-                          width: 42,
-                        ),
-                      ),
-                    ),
-                  ),
-                  // Logo
+                  const SizedBox(height: 60),
                   SizedBox(
                     height: 60,
                     child: Image.asset('assets/images/smile.png'),
                   ),
                   const SizedBox(height: 20),
-                  // Title
                   const Text(
                     'Sign up',
                     style: TextStyle(
