@@ -19,9 +19,10 @@ class HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    // Memanggil API untuk mengambil postingan
-    Future.microtask(
-        () => Provider.of<PostProvider>(context, listen: false).fetchPosts());
+    Future.microtask(() {
+      if (!mounted) return;
+      Provider.of<PostProvider>(context, listen: false).fetchPosts();
+    });
   }
 
   void _onItemTapped(int index) {
@@ -87,8 +88,6 @@ class HomeScreenState extends State<HomeScreen> {
     final userProvider = Provider.of<UserProvider>(context);
     final postProvider = Provider.of<PostProvider>(context);
     final posts = postProvider.posts;
-
-    // Fallback jika userProvider.user null
     final user = userProvider.user ??
         {
           'name': 'Guest',
@@ -150,7 +149,7 @@ class HomeScreenState extends State<HomeScreen> {
                                               Text(
                                                 post['username'] ??
                                                     'Unknown User',
-                                                style: const TextStyle(
+                                                style: TextStyle(
                                                   fontSize: 16,
                                                   fontWeight: FontWeight.bold,
                                                   color: Color(0xFFE68C52),
@@ -158,7 +157,7 @@ class HomeScreenState extends State<HomeScreen> {
                                               ),
                                               Text(
                                                 post['time'] ?? 'Some time ago',
-                                                style: const TextStyle(
+                                                style: TextStyle(
                                                   fontSize: 12,
                                                   color: Color(0xFFA6A6A6),
                                                 ),
@@ -172,12 +171,12 @@ class HomeScreenState extends State<HomeScreen> {
                                     Text(
                                       post['description'] ??
                                           'No description available',
-                                      style: const TextStyle(fontSize: 14),
+                                      style: TextStyle(fontSize: 14),
                                     ),
                                     const SizedBox(height: 8),
                                     Text(
                                       post['date'] ?? 'Unknown Date',
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                           fontSize: 12,
                                           color: Color(0xFFA6A6A6)),
                                     ),
@@ -211,8 +210,7 @@ class HomeScreenState extends State<HomeScreen> {
                                   const SizedBox(width: 4),
                                   Text(
                                     post['comments'] ?? '0',
-                                    style: const TextStyle(
-                                        color: Color(0xFFA6A6A6)),
+                                    style: TextStyle(color: Color(0xFFA6A6A6)),
                                   ),
                                 ],
                               ),

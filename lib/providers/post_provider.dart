@@ -12,18 +12,15 @@ class PostProvider with ChangeNotifier {
   List<Map<String, dynamic>> get posts => _posts;
   bool get isLoading => _isLoading;
 
-  // Fungsi untuk mengambil postingan dari backend
   Future<void> fetchPosts() async {
-    _isLoading = true; // Mulai loading
+    _isLoading = true;
     notifyListeners();
 
-    final url = APIConfig.postsUrl; // Ambil URL dari constants.dart
+    final url = APIConfig.postsUrl;
 
     try {
-      // Membatasi waktu request untuk menghindari macet
-      final response = await http
-          .get(Uri.parse(url))
-          .timeout(const Duration(seconds: 10)); // Timeout 10 detik
+      final response =
+          await http.get(Uri.parse(url)).timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body) as List<dynamic>;
@@ -32,18 +29,17 @@ class PostProvider with ChangeNotifier {
         throw Exception('Failed to load posts: ${response.statusCode}');
       }
     } on http.ClientException {
-      _posts = []; // Fallback jika terjadi kesalahan koneksi
+      _posts = [];
     } on TimeoutException {
-      _posts = []; // Fallback jika waktu habis
+      _posts = [];
     } catch (error) {
-      _posts = []; // Fallback jika terjadi kesalahan umum
+      _posts = [];
     } finally {
-      _isLoading = false; // Selesai loading
+      _isLoading = false;
       notifyListeners();
     }
   }
 
-  // Fungsi untuk menghapus semua postingan (digunakan saat logout)
   void clearPosts() {
     _posts = [];
     notifyListeners();

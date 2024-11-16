@@ -14,20 +14,19 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class RegisterScreenState extends State<RegisterScreen> {
-  bool _isPasswordVisible = false; // Toggle for password visibility
+  bool _isPasswordVisible = false;
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
-  bool _isLoading = false; // Loading indicator during registration
+  bool _isLoading = false;
 
   Future<void> _handleRegister() async {
-    // Retrieve input values
     final username = _usernameController.text.trim();
     final password = _passwordController.text.trim();
     final name = _nameController.text.trim();
 
-    // Validate input fields
     if (username.isEmpty || password.isEmpty || name.isEmpty) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please fill in all fields')),
       );
@@ -39,26 +38,23 @@ class RegisterScreenState extends State<RegisterScreen> {
     });
 
     try {
-      // Call the register method from UserProvider
       await Provider.of<UserProvider>(context, listen: false)
           .register(username, password, name);
-
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Registration successful!')),
       );
 
-      // Navigate to LoginScreen
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const LoginScreen()),
       );
     } catch (error) {
-      // Show error message
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Registration failed: $error')),
       );
     } finally {
-      // Stop loading indicator
       setState(() {
         _isLoading = false;
       });
@@ -77,7 +73,6 @@ class RegisterScreenState extends State<RegisterScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Back button
                   GestureDetector(
                     onTap: () {
                       Navigator.pushReplacement(
@@ -121,7 +116,6 @@ class RegisterScreenState extends State<RegisterScreen> {
                     ),
                   ),
                   const SizedBox(height: 30),
-                  // Name Input Field
                   CustomTextField(
                     controller: _nameController,
                     hintText: 'Name',
@@ -129,7 +123,6 @@ class RegisterScreenState extends State<RegisterScreen> {
                     showVisibilityIcon: false,
                   ),
                   const SizedBox(height: 20),
-                  // Username Input Field
                   CustomTextField(
                     controller: _usernameController,
                     hintText: 'Username',
@@ -137,7 +130,6 @@ class RegisterScreenState extends State<RegisterScreen> {
                     showVisibilityIcon: false,
                   ),
                   const SizedBox(height: 20),
-                  // Password Input Field
                   CustomTextField(
                     controller: _passwordController,
                     hintText: 'Password',
@@ -151,12 +143,12 @@ class RegisterScreenState extends State<RegisterScreen> {
                     },
                   ),
                   const SizedBox(height: 50),
-                  // Confirm Button
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       _isLoading
-                          ? const CircularProgressIndicator()
+                          ? const CircularProgressIndicator(
+                              color: Color(0xFFE68C52))
                           : ConfirmButton(
                               text: 'Confirm',
                               onPressed: _handleRegister,
@@ -164,7 +156,6 @@ class RegisterScreenState extends State<RegisterScreen> {
                     ],
                   ),
                   const SizedBox(height: 80),
-                  // Sign in link
                   Center(
                     child: RichText(
                       text: TextSpan(

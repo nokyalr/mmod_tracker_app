@@ -9,8 +9,7 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => UserProvider()),
-        ChangeNotifierProvider(
-            create: (_) => PostProvider()), // Tambahkan PostProvider
+        ChangeNotifierProvider(create: (_) => PostProvider()),
       ],
       child: const MyApp(),
     ),
@@ -24,7 +23,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Mood Tracker',
-      theme: ThemeData(primarySwatch: Colors.orange),
+      theme:
+          ThemeData(primarySwatch: Colors.orange, fontFamily: 'ADLaMDisplay'),
       home: const LoginScreen(),
       debugShowCheckedModeBanner: false,
     );

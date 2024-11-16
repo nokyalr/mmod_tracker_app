@@ -8,7 +8,6 @@ import '../models/suggestion.dart';
 class ApiService {
   final String baseUrl = 'http://localhost/mood_tracker_backend/api';
 
-  // Login user
   Future<User> login(String username, String password) async {
     final response = await http.post(
       Uri.parse('$baseUrl/user.php?action=login'),
@@ -21,7 +20,6 @@ class ApiService {
     }
   }
 
-  // Get moods
   Future<List<Mood>> getMoods() async {
     final response = await http.get(Uri.parse('$baseUrl/mood.php'));
     if (response.statusCode == 200) {
@@ -32,7 +30,6 @@ class ApiService {
     }
   }
 
-  // Get posts
   Future<List<Post>> getPosts() async {
     final response = await http.get(Uri.parse('$baseUrl/post.php'));
     if (response.statusCode == 200) {
@@ -43,7 +40,6 @@ class ApiService {
     }
   }
 
-  // Create a post
   Future<void> createPost(
       int userId, int moodId, int moodScore, String content) async {
     final response = await http.post(
@@ -62,7 +58,6 @@ class ApiService {
     }
   }
 
-  // Get suggestions based on last mood
   Future<List<Suggestion>> getSuggestions() async {
     final response = await http.get(Uri.parse('$baseUrl/suggestion.php'));
     if (response.statusCode == 200) {

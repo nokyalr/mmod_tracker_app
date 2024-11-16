@@ -15,18 +15,15 @@ class LoginScreen extends StatefulWidget {
 }
 
 class LoginScreenState extends State<LoginScreen> {
-  bool _isPasswordVisible = false; // For password visibility toggle
+  bool _isPasswordVisible = false;
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool _isLoading = false; // For loading indicator during login
+  bool _isLoading = false;
 
   Future<void> _handleLogin() async {
-    // Retrieve input values
     final username = _usernameController.text.trim();
-    final password =
-        _passwordController.text.trim(); // Ensure password is a string
+    final password = _passwordController.text.trim();
 
-    // Validate input
     if (username.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please fill in all fields')),
@@ -34,28 +31,23 @@ class LoginScreenState extends State<LoginScreen> {
       return;
     }
 
-    // Start loading
     setState(() {
       _isLoading = true;
     });
 
     try {
-      // Perform login using UserProvider
       await Provider.of<UserProvider>(context, listen: false)
           .login(username, password);
-
-      // Navigate to HomeScreen on successful login
+      if (!mounted) return;
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const HomeScreen()),
       );
     } catch (error) {
-      // Show error message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(error.toString())),
       );
     } finally {
-      // Stop loading
       setState(() {
         _isLoading = false;
       });
@@ -74,13 +66,11 @@ class LoginScreenState extends State<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 50),
-                // Logo at the top
                 SizedBox(
                   height: 60,
                   child: Image.asset('assets/images/smile.png'),
                 ),
                 const SizedBox(height: 20),
-                // Title
                 const Text(
                   'Sign in',
                   style: TextStyle(
@@ -97,7 +87,6 @@ class LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 const SizedBox(height: 30),
-                // Username Input Field
                 CustomTextField(
                   controller: _usernameController,
                   hintText: 'Username',
@@ -105,7 +94,6 @@ class LoginScreenState extends State<LoginScreen> {
                   showVisibilityIcon: false,
                 ),
                 const SizedBox(height: 20),
-                // Password Input Field
                 CustomTextField(
                   controller: _passwordController,
                   hintText: 'Password',
@@ -119,20 +107,19 @@ class LoginScreenState extends State<LoginScreen> {
                   },
                 ),
                 const SizedBox(height: 50),
-                // Confirm Button
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     _isLoading
-                        ? const CircularProgressIndicator()
+                        ? const CircularProgressIndicator(
+                            color: Color(0xFFE68C52))
                         : ConfirmButton(
                             text: 'Confirm',
                             onPressed: _handleLogin,
-                          ),
+                          )
                   ],
                 ),
                 const SizedBox(height: 100),
-                // Sign Up Link
                 Center(
                   child: RichText(
                     text: TextSpan(
