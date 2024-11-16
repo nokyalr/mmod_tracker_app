@@ -83,6 +83,24 @@ class HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  String formatTimeAgo(String timestamp) {
+    final DateTime postTime = DateTime.parse(timestamp);
+    final Duration difference = DateTime.now().difference(postTime);
+
+    if (difference.inMinutes < 1) {
+      return 'Just now';
+    } else if (difference.inMinutes < 60) {
+      return '${difference.inMinutes} minutes ago';
+    } else if (difference.inHours < 24) {
+      return '${difference.inHours} ${difference.inHours == 1 ? 'hour' : 'hours'} ago';
+    } else if (difference.inDays < 7) {
+      return '${difference.inDays} ${difference.inDays == 1 ? 'day' : 'days'} ago';
+    } else {
+      final int weeks = (difference.inDays / 7).floor();
+      return '$weeks ${weeks == 1 ? 'week' : 'weeks'} ago';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
@@ -147,8 +165,7 @@ class HomeScreenState extends State<HomeScreen> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                post['username'] ??
-                                                    'Unknown User',
+                                                post['name'] ?? 'Unknown User',
                                                 style: TextStyle(
                                                   fontSize: 16,
                                                   fontWeight: FontWeight.bold,
@@ -156,8 +173,11 @@ class HomeScreenState extends State<HomeScreen> {
                                                 ),
                                               ),
                                               Text(
-                                                post['time'] ?? 'Some time ago',
-                                                style: TextStyle(
+                                                post['time'] != null
+                                                    ? formatTimeAgo(
+                                                        post['time'])
+                                                    : 'Some time ago',
+                                                style: const TextStyle(
                                                   fontSize: 12,
                                                   color: Color(0xFFA6A6A6),
                                                 ),

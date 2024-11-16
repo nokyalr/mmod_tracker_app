@@ -79,16 +79,10 @@ class UserProvider with ChangeNotifier {
 
   // Logout Function
   void logout() async {
-    // Reset user data
     _user = null;
-
-    // Hapus cache SharedPreferences
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
-
-    // Hapus cache file HTTP
     await DefaultCacheManager().emptyCache();
-
     notifyListeners();
   }
 }
