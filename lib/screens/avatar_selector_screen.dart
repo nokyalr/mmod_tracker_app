@@ -71,11 +71,10 @@ class AvatarSelectorScreenState extends State<AvatarSelectorScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 50.0),
+              padding: const EdgeInsets.symmetric(vertical: 30.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Tombol Cancel
                   ConfirmButton(
                     text: 'Cancel',
                     onPressed: () {
@@ -84,7 +83,6 @@ class AvatarSelectorScreenState extends State<AvatarSelectorScreen> {
                     width: 135,
                   ),
                   const SizedBox(width: 20),
-                  // Tombol Confirm
                   ConfirmButton(
                     text: 'Confirm',
                     onPressed: () {
