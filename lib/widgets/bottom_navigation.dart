@@ -30,8 +30,8 @@ class BottomNavigation extends StatelessWidget {
         onTap: onItemTapped,
         items: <BottomNavigationBarItem>[
           _buildNavItem('Home', 'assets/images/home.png', 0),
-          _buildNavItem('Calendar', 'assets/images/calender.png', 1),
-          _buildNavItem('Ideas', 'assets/images/idea.png', 2),
+          _buildNavItem('Report', 'assets/images/calender.png', 1),
+          _buildNavItem('Suggestion', 'assets/images/idea.png', 2),
           _buildNavItem('User', 'assets/images/user2.png', 3),
         ],
       ),

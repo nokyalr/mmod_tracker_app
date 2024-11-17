@@ -119,7 +119,7 @@ class LoginScreenState extends State<LoginScreen> {
                           )
                   ],
                 ),
-                const SizedBox(height: 100),
+                const SizedBox(height: 160),
                 Center(
                   child: RichText(
                     text: TextSpan(
@@ -139,8 +139,11 @@ class LoginScreenState extends State<LoginScreen> {
                             ..onTap = () {
                               Navigator.pushReplacement(
                                 context,
-                                MaterialPageRoute(
-                                  builder: (context) => const RegisterScreen(),
+                                PageRouteBuilder(
+                                  pageBuilder:
+                                      (context, animation1, animation2) =>
+                                          RegisterScreen(),
+                                  transitionDuration: Duration.zero,
                                 ),
                               );
                             },

@@ -73,7 +73,7 @@ class RegisterScreenState extends State<RegisterScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 60),
+                  const SizedBox(height: 95),
                   SizedBox(
                     height: 60,
                     child: Image.asset('assets/images/smile.png'),
@@ -154,9 +154,12 @@ class RegisterScreenState extends State<RegisterScreen> {
                               ..onTap = () {
                                 Navigator.pushReplacement(
                                   context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const LoginScreen()),
+                                  PageRouteBuilder(
+                                    pageBuilder:
+                                        (context, animation1, animation2) =>
+                                            LoginScreen(),
+                                    transitionDuration: Duration.zero,
+                                  ),
                                 );
                               },
                           ),
