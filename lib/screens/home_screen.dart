@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mood_tracker_app/screens/report_screen.dart';
 import 'package:provider/provider.dart';
 import 'user_screen.dart';
 import '../providers/post_provider.dart';
@@ -40,13 +41,13 @@ class HomeScreenState extends State<HomeScreen> {
         ),
       );
     } else if (index == 1) {
-      // Navigator.pushReplacement(
-      //   context,
-      //   PageRouteBuilder(
-      //     pageBuilder: (context, animation1, animation2) => ReportScreen(),
-      //     transitionDuration: Duration.zero,
-      //   ),
-      // );
+      Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+          pageBuilder: (context, animation1, animation2) => ReportScreen(),
+          transitionDuration: Duration.zero,
+        ),
+      );
     } else if (index == 2) {
       // Navigator.pushReplacement(
       //   context,
@@ -119,7 +120,7 @@ class HomeScreenState extends State<HomeScreen> {
             user['profile_picture'] ?? 'assets/images/default_profile.png',
         titleText: 'Welcome back, ${user['name'] ?? 'Guest'}!',
         useBorder: true,
-        imageHeight: 48,
+        imageHeight: 42,
         useImage: true,
         backgroundColor: Colors.white,
         textColor: const Color(0xFFE68C52),

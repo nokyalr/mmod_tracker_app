@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:mood_tracker_app/providers/post_provider.dart';
 import 'package:mood_tracker_app/screens/edit_profile_screen.dart';
+import 'package:mood_tracker_app/screens/report_screen.dart';
 import 'home_screen.dart';
 import 'login_screen.dart';
 import 'package:provider/provider.dart';
@@ -44,14 +45,14 @@ class UserScreenState extends State<UserScreen> {
         ),
       );
     } else if (index == 1) {
-      // Navigator.pushReplacement(
-      //   context,
-      //   PageRouteBuilder(
-      //     pageBuilder: (context, animation1, animation2) =>
-      //         const ReportScreen(),
-      //     transitionDuration: Duration.zero,
-      //   ),
-      // );
+      Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+          pageBuilder: (context, animation1, animation2) =>
+              const ReportScreen(),
+          transitionDuration: Duration.zero,
+        ),
+      );
     } else if (index == 2) {
       // Navigator.pushReplacement(
       //   context,
