@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mood_tracker_app/providers/post_provider.dart';
 import 'package:mood_tracker_app/screens/edit_profile_screen.dart';
 import 'package:mood_tracker_app/screens/report_screen.dart';
+import 'package:mood_tracker_app/screens/friends_screen.dart';
 import 'home_screen.dart';
 import 'login_screen.dart';
 import 'package:provider/provider.dart';
@@ -54,14 +55,7 @@ class UserScreenState extends State<UserScreen> {
         ),
       );
     } else if (index == 2) {
-      // Navigator.pushReplacement(
-      //   context,
-      //   PageRouteBuilder(
-      //     pageBuilder: (context, animation1, animation2) =>
-      //         const SuggestionScreen(),
-      //     transitionDuration: Duration.zero,
-      //   ),
-      // );
+      // Tambahkan navigasi jika ada halaman lain
     } else if (index == 3) {
       Navigator.pushReplacement(
         context,
@@ -182,14 +176,12 @@ class UserScreenState extends State<UserScreen> {
                       ),
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
-                          // Navigator.pushReplacement(
-                          //   context,
-                          //   PageRouteBuilder(
-                          //     pageBuilder: (context, animation1, animation2) =>
-                          //         ReportScreen(),
-                          //     transitionDuration: Duration.zero,
-                          //   ),
-                          // );
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const FriendsScreen(),
+                            ),
+                          );
                         },
                     ),
                   ),

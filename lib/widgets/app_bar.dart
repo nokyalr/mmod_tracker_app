@@ -4,7 +4,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool useImage;
   final String imagePath;
   final double imageHeight;
-  final Widget? userScreen;
+  final Widget? navigationScreen;
   final String titleText;
   final Color textColor;
   final Color? imageColor;
@@ -16,7 +16,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.useImage,
     required this.imagePath,
     required this.imageHeight,
-    this.userScreen,
+    this.navigationScreen,
     required this.titleText,
     required this.textColor,
     this.imageColor,
@@ -44,12 +44,12 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           if (useImage)
             GestureDetector(
               onTap: () {
-                if (userScreen != null) {
+                if (navigationScreen != null) {
                   Navigator.pushReplacement(
                     context,
                     PageRouteBuilder(
                       pageBuilder: (context, animation1, animation2) =>
-                          userScreen!,
+                          navigationScreen!,
                       transitionDuration: Duration.zero,
                     ),
                   );

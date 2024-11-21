@@ -12,4 +12,5 @@ class APIConfig {
       '$baseUrl/report.php?action=getMoodSummary&user_id';
   static String get fetchReportDates =>
       '$baseUrl/report.php?action=getMoodDates&user_id';
+  static const String getFriends = '$baseUrl/friends.php';
 }

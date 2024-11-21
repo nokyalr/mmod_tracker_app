@@ -97,7 +97,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
         imagePath: 'assets/images/back.png',
         imageHeight: 28,
         titleText: 'Edit Profile',
-        userScreen: const UserScreen(),
+        navigationScreen: const UserScreen(),
         useBorder: true,
         backgroundColor: Colors.white,
         textColor: const Color(0xFFE68C52),
