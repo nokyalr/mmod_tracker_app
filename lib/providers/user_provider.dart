@@ -25,7 +25,7 @@ class UserProvider with ChangeNotifier {
         notifyListeners();
       } else {
         final error = json.decode(response.body)['message'];
-        throw Exception(error ?? 'Registration failed');
+        throw error ?? 'Registration failed';
       }
     } catch (error) {
       rethrow;
@@ -51,7 +51,7 @@ class UserProvider with ChangeNotifier {
         notifyListeners();
       } else {
         final error = json.decode(response.body)['message'];
-        throw Exception(error ?? 'Login failed');
+        throw error ?? 'Login failed';
       }
     } catch (error) {
       rethrow;
@@ -68,7 +68,7 @@ class UserProvider with ChangeNotifier {
         notifyListeners();
       } else {
         final error = json.decode(response.body)['message'];
-        throw Exception(error ?? 'Failed to fetch user data');
+        throw error ?? 'Failed to fetch user data';
       }
     } catch (error) {
       rethrow;
@@ -92,18 +92,20 @@ class UserProvider with ChangeNotifier {
       _user?['profile_picture'] = profilePicture;
       notifyListeners();
     } else {
-      throw Exception('Failed to update avatar');
+      throw 'Failed to update avatar';
     }
   }
 
-  Future<void> updateProfile(String name, String password) async {
+  Future<void> updateProfile(
+      String name, String oldPassword, String newPassword) async {
     final userId = _user?['user_id'];
     if (userId == null) return;
 
     final body = json.encode({
       'user_id': userId,
       'name': name,
-      'password': password,
+      'old_password': oldPassword,
+      'new_password': newPassword,
     });
 
     final response = await http.post(
@@ -112,11 +114,10 @@ class UserProvider with ChangeNotifier {
       body: body,
     );
 
-    if (response.statusCode == 200) {
-      _user?['name'] = name;
-      notifyListeners();
-    } else {
-      throw Exception('Failed to update profile');
+    if (response.statusCode != 200) {
+      final responseData = jsonDecode(response.body);
+      final errorMessage = responseData['message'] ?? 'Unknown error';
+      throw errorMessage;
     }
   }
 

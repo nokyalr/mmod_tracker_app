@@ -26,14 +26,8 @@ class PostProvider with ChangeNotifier {
         final data = json.decode(response.body) as List<dynamic>;
         _posts = data.map((item) => item as Map<String, dynamic>).toList();
       } else {
-        throw Exception('Failed to load posts: ${response.statusCode}');
+        throw 'Failed to load posts: ${response.statusCode}';
       }
-    } on http.ClientException {
-      _posts = [];
-    } on TimeoutException {
-      _posts = [];
-    } catch (error) {
-      _posts = [];
     } finally {
       _isLoading = false;
       notifyListeners();

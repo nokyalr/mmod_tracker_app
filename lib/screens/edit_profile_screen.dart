@@ -17,26 +17,31 @@ class EditProfileScreen extends StatefulWidget {
 class EditProfileScreenState extends State<EditProfileScreen> {
   bool _isPasswordVisible = false;
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _oldPasswordController = TextEditingController();
+  final TextEditingController _newPasswordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
   bool _isLoading = false;
 
   Future<void> _updateProfile() async {
     final name = _nameController.text.trim();
-    final password = _passwordController.text.trim();
+    final oldPassword = _oldPasswordController.text.trim();
+    final newPassword = _newPasswordController.text.trim();
     final confirmPassword = _confirmPasswordController.text.trim();
 
-    if (name.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
+    if (name.isEmpty ||
+        oldPassword.isEmpty ||
+        newPassword.isEmpty ||
+        confirmPassword.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please fill in all fields')),
       );
       return;
     }
 
-    if (password != confirmPassword) {
+    if (newPassword != confirmPassword) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Passwords do not match')),
+        const SnackBar(content: Text('New passwords do not match')),
       );
       return;
     }
@@ -47,7 +52,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
 
     try {
       await Provider.of<UserProvider>(context, listen: false)
-          .updateProfile(name, password);
+          .updateProfile(name, oldPassword, newPassword);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -69,18 +74,6 @@ class EditProfileScreenState extends State<EditProfileScreen> {
       setState(() {
         _isLoading = false;
       });
-    }
-  }
-
-  Future<void> _selectAvatar() async {
-    final selectedAvatar = await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const AvatarSelectorScreen()),
-    );
-
-    if (selectedAvatar != null && mounted) {
-      Provider.of<UserProvider>(context, listen: false)
-          .updateAvatar(selectedAvatar);
     }
   }
 
@@ -151,8 +144,16 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                       ),
                       const SizedBox(height: 10),
                       CustomTextField(
-                        controller: _passwordController,
-                        hintText: 'Password',
+                        controller: _oldPasswordController,
+                        hintText: 'Old Password',
+                        prefixIconPath: 'assets/images/padlock.png',
+                        obscureText: true,
+                        showVisibilityIcon: false,
+                      ),
+                      const SizedBox(height: 10),
+                      CustomTextField(
+                        controller: _newPasswordController,
+                        hintText: 'New Password',
                         prefixIconPath: 'assets/images/padlock.png',
                         obscureText: true,
                         isPasswordVisible: _isPasswordVisible,
@@ -193,5 +194,17 @@ class EditProfileScreenState extends State<EditProfileScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> _selectAvatar() async {
+    final selectedAvatar = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const AvatarSelectorScreen()),
+    );
+
+    if (selectedAvatar != null && mounted) {
+      Provider.of<UserProvider>(context, listen: false)
+          .updateAvatar(selectedAvatar);
+    }
   }
 }

@@ -16,7 +16,7 @@ class ApiService {
     if (response.statusCode == 200) {
       return User.fromJson(json.decode(response.body));
     } else {
-      throw Exception('Failed to login');
+      throw 'Failed to login';
     }
   }
 
@@ -26,7 +26,7 @@ class ApiService {
       List<dynamic> data = json.decode(response.body);
       return data.map((mood) => Mood.fromJson(mood)).toList();
     } else {
-      throw Exception('Failed to load moods');
+      throw 'Failed to load moods';
     }
   }
 
@@ -36,7 +36,7 @@ class ApiService {
       List<dynamic> data = json.decode(response.body);
       return data.map((post) => Post.fromJson(post)).toList();
     } else {
-      throw Exception('Failed to load posts');
+      throw 'Failed to load posts';
     }
   }
 
@@ -54,7 +54,7 @@ class ApiService {
       }),
     );
     if (response.statusCode != 201) {
-      throw Exception('Failed to create post');
+      throw 'Failed to create post';
     }
   }
 
@@ -64,7 +64,7 @@ class ApiService {
       List<dynamic> data = json.decode(response.body);
       return data.map((suggestion) => Suggestion.fromJson(suggestion)).toList();
     } else {
-      throw Exception('Failed to load suggestions');
+      throw 'Failed to load suggestions';
     }
   }
 }
