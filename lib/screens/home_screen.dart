@@ -244,6 +244,14 @@ class HomeScreenState extends State<HomeScreen> {
                     );
                   },
                 ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Tambahkan aksi ketika tombol "+" ditekan
+          print('Tombol "+" ditekan!');
+        },
+        backgroundColor: const Color(0xFFE68C52),
+        child: const Icon(Icons.add, size: 36, color: Colors.white),
+      ),
       bottomNavigationBar: BottomNavigation(
         selectedIndex: _selectedIndex,
         onItemTapped: _onItemTapped,
