@@ -252,13 +252,11 @@ class HomeScreenState extends State<HomeScreen> {
             builder: (context) {
               return MoodDialog(
                 onMoodSelected: (int moodScore) {
-                  // Tambahkan logika ketika mood dipilih
                   print("Mood selected: $moodScore");
                 },
                 onNextPressed: () {
-                  // Tambahkan logika untuk tombol "Next"
                   print("Next button pressed!");
-                  Navigator.pop(context); // Tutup dialog
+                  Navigator.pop(context);
                 },
               );
             },

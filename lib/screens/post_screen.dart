@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:mood_tracker_app/widgets/confirm_button.dart';
 
 class MoodDialog extends StatefulWidget {
   final Function(int) onMoodSelected;
   final VoidCallback onNextPressed;
 
   const MoodDialog({
-    Key? key,
+    super.key,
     required this.onMoodSelected,
     required this.onNextPressed,
-  }) : super(key: key);
+  });
 
   @override
   State<MoodDialog> createState() => _MoodDialogState();
@@ -21,6 +22,7 @@ class _MoodDialogState extends State<MoodDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
+      insetPadding: EdgeInsets.all(16),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),
@@ -30,12 +32,14 @@ class _MoodDialogState extends State<MoodDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              "How are you today?",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFFE68C52),
+            Center(
+              child: Text(
+                "How are you today?",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFFE68C52),
+                ),
               ),
             ),
             const SizedBox(height: 16),
@@ -67,7 +71,6 @@ class _MoodDialogState extends State<MoodDialog> {
               ),
             ),
             const SizedBox(height: 16),
-            // Mood selection row
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -79,27 +82,13 @@ class _MoodDialogState extends State<MoodDialog> {
               ],
             ),
             const SizedBox(height: 24),
-            Center(
-              child: ElevatedButton(
+            Align(
+              alignment: Alignment.centerRight,
+              child: ConfirmButton(
+                text: "Next",
                 onPressed:
-                    selectedMoodScore != null ? widget.onNextPressed : null,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFE68C52),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 12,
-                    horizontal: 24,
-                  ),
-                ),
-                child: const Text(
-                  "Next",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                  ),
-                ),
+                    selectedMoodScore != null ? widget.onNextPressed : () {},
+                width: 100,
               ),
             ),
           ],
@@ -108,35 +97,25 @@ class _MoodDialogState extends State<MoodDialog> {
     );
   }
 
-  /// Widget to display mood images with selection
   Widget _buildMoodImage(BuildContext context, String imagePath, int score) {
     return GestureDetector(
       onTap: () {
         setState(() {
-          selectedMoodScore = score; // Update selected mood
+          selectedMoodScore = score;
           widget.onMoodSelected(score);
         });
       },
-      child: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: selectedMoodScore == score
-                ? const Color(0xFFE68C52)
-                : Colors.transparent,
-          ),
-          borderRadius: BorderRadius.circular(12),
-        ),
+      child: Opacity(
+        opacity: selectedMoodScore == score ? 1.0 : 0.4,
         child: Image.asset(
           imagePath,
-          width: 23,
-          height: 23,
+          width: 42,
+          height: 42,
         ),
       ),
     );
   }
 
-  /// Show date picker to select date
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
