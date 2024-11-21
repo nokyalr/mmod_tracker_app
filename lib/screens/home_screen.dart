@@ -6,6 +6,7 @@ import '../providers/post_provider.dart';
 import '../providers/user_provider.dart';
 import '../../widgets/bottom_navigation.dart';
 import '../../widgets/app_bar.dart';
+import 'package:mood_tracker_app/screens/post_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -246,8 +247,22 @@ class HomeScreenState extends State<HomeScreen> {
                 ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Tambahkan aksi ketika tombol "+" ditekan
-          print('Tombol "+" ditekan!');
+          showDialog(
+            context: context,
+            builder: (context) {
+              return MoodDialog(
+                onMoodSelected: (int moodScore) {
+                  // Tambahkan logika ketika mood dipilih
+                  print("Mood selected: $moodScore");
+                },
+                onNextPressed: () {
+                  // Tambahkan logika untuk tombol "Next"
+                  print("Next button pressed!");
+                  Navigator.pop(context); // Tutup dialog
+                },
+              );
+            },
+          );
         },
         backgroundColor: const Color(0xFFE68C52),
         child: const Icon(Icons.add, size: 36, color: Colors.white),
