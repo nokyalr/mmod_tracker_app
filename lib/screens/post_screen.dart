@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:mood_tracker_app/widgets/confirm_button.dart';
+import 'package:mood_tracker_app/screens/mood_details.dart';
 
 class MoodDialog extends StatefulWidget {
   final Function(int) onMoodSelected;
-  final VoidCallback onNextPressed;
 
   const MoodDialog({
     super.key,
     required this.onMoodSelected,
-    required this.onNextPressed,
+    required Null Function() onNextPressed,
   });
 
   @override
@@ -22,7 +22,7 @@ class _MoodDialogState extends State<MoodDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      insetPadding: EdgeInsets.all(16),
+      insetPadding: const EdgeInsets.all(16),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),
@@ -38,7 +38,7 @@ class _MoodDialogState extends State<MoodDialog> {
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFFE68C52),
+                  color: const Color(0xFFE68C52),
                 ),
               ),
             ),
@@ -86,8 +86,23 @@ class _MoodDialogState extends State<MoodDialog> {
               alignment: Alignment.centerRight,
               child: ConfirmButton(
                 text: "Next",
-                onPressed:
-                    selectedMoodScore != null ? widget.onNextPressed : () {},
+                onPressed: () {
+                  if (selectedMoodScore != null) {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => MoodDetailsPage(),
+                      ),
+                    );
+                  } else {
+                    // Tampilkan pesan jika mood belum dipilih
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Please select a mood first!'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                },
                 width: 100,
               ),
             ),
