@@ -166,6 +166,7 @@ class _ReportScreenState extends State<ReportScreen> {
       ),
       itemCount: lastDayOfMonth.day,
       shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
         final day = firstDayOfMonth.add(Duration(days: index));
         final isMoodLogged = _moodDates.any((moodDate) =>
@@ -274,64 +275,66 @@ class _ReportScreenState extends State<ReportScreen> {
         backgroundColor: Colors.white,
         textColor: const Color(0xFFE68C52),
       ),
-      body: Container(
-        color: Colors.white,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back_ios,
-                        color: Color(0xFFE68C52)),
-                    onPressed: () {
-                      setState(() {
-                        _selectedMonth = DateTime(
-                          _selectedMonth.year,
-                          _selectedMonth.month - 1,
-                        );
-                      });
-                      _fetchDataForSelectedMonth();
-                    },
-                  ),
-                  GestureDetector(
-                    onTap: () => _showMonthPicker(context),
-                    child: Text(
-                      DateFormat('MMMM - yyyy').format(_selectedMonth),
-                      style: const TextStyle(
-                          fontSize: 18, color: Color(0xFFE68C52)),
+      body: SingleChildScrollView(
+        child: Container(
+          color: Colors.white,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.arrow_back_ios,
+                          color: Color(0xFFE68C52)),
+                      onPressed: () {
+                        setState(() {
+                          _selectedMonth = DateTime(
+                            _selectedMonth.year,
+                            _selectedMonth.month - 1,
+                          );
+                        });
+                        _fetchDataForSelectedMonth();
+                      },
                     ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.arrow_forward_ios,
-                        color: Color(0xFFE68C52)),
-                    onPressed: () {
-                      setState(() {
-                        _selectedMonth = DateTime(
-                          _selectedMonth.year,
-                          _selectedMonth.month + 1,
-                        );
-                      });
-                      _fetchDataForSelectedMonth();
-                    },
-                  ),
-                ],
+                    GestureDetector(
+                      onTap: () => _showMonthPicker(context),
+                      child: Text(
+                        DateFormat('MMMM - yyyy').format(_selectedMonth),
+                        style: const TextStyle(
+                            fontSize: 18, color: Color(0xFFE68C52)),
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.arrow_forward_ios,
+                          color: Color(0xFFE68C52)),
+                      onPressed: () {
+                        setState(() {
+                          _selectedMonth = DateTime(
+                            _selectedMonth.year,
+                            _selectedMonth.month + 1,
+                          );
+                        });
+                        _fetchDataForSelectedMonth();
+                      },
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            _buildCalendar(),
-            const SizedBox(height: 16),
-            const SizedBox(height: 16),
-            if (reportProvider.isLoading)
-              const Center(child: CircularProgressIndicator())
-            else if (moodSummary == null)
-              const Center(child: Text('No data available for this month'))
-            else
-              _buildHorizontalBar(moodSummary),
-          ],
+              const SizedBox(height: 16),
+              _buildCalendar(),
+              const SizedBox(height: 16),
+              const SizedBox(height: 16),
+              if (reportProvider.isLoading)
+                const Center(child: CircularProgressIndicator())
+              else if (moodSummary == null)
+                const Center(child: Text('No data available for this month'))
+              else
+                _buildHorizontalBar(moodSummary),
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: BottomNavigation(
