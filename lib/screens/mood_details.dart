@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:mood_tracker_app/screens/note_screen.dart';
 
 class MoodDetailsPage extends StatefulWidget {
-  const MoodDetailsPage({Key? key}) : super(key: key);
+  const MoodDetailsPage({super.key});
 
   @override
-  _MoodDetailsPageState createState() => _MoodDetailsPageState();
+  MoodDetailsPageState createState() => MoodDetailsPageState();
 }
 
-class _MoodDetailsPageState extends State<MoodDetailsPage> {
+class MoodDetailsPageState extends State<MoodDetailsPage> {
   // Menyimpan status warna yang dipilih (terklik atau tidak)
   final Map<String, bool> _selectedMoods = {
     "depression": false,

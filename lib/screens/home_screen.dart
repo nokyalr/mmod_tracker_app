@@ -7,6 +7,7 @@ import '../providers/user_provider.dart';
 import '../../widgets/bottom_navigation.dart';
 import '../../widgets/app_bar.dart';
 import 'package:mood_tracker_app/screens/post_screen.dart';
+import 'package:logger/logger.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,6 +18,7 @@ class HomeScreen extends StatefulWidget {
 
 class HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
+  final logger = Logger();
 
   @override
   void initState() {
@@ -252,10 +254,10 @@ class HomeScreenState extends State<HomeScreen> {
             builder: (context) {
               return MoodDialog(
                 onMoodSelected: (int moodScore) {
-                  print("Mood selected: $moodScore");
+                  logger.i("Mood selected: $moodScore");
                 },
                 onNextPressed: () {
-                  print("Next button pressed!");
+                  logger.i("Next button pressed!");
                   Navigator.pop(context);
                 },
               );

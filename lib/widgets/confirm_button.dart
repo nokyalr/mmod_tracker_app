@@ -4,19 +4,21 @@ class ConfirmButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
   final double width;
+  final double height;
 
   const ConfirmButton({
     super.key,
     required this.text,
     required this.onPressed,
     this.width = 135,
+    this.height = 60,
   });
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: width,
-      height: 60,
+      height: height,
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(

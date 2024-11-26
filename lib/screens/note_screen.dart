@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 
 class NoteScreen extends StatelessWidget {
+  NoteScreen({super.key});
+  final logger = Logger();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,7 +48,7 @@ class NoteScreen extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () {
                     // Logika tombol Save
-                    print("Save button pressed!");
+                    logger.i("Save button pressed!");
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFE68C52),
@@ -64,7 +68,7 @@ class NoteScreen extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () {
                     // Logika tombol Share
-                    print("Share button pressed!");
+                    logger.i("Share button pressed!");
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFE68C52),

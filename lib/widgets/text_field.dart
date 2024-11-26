@@ -7,7 +7,9 @@ class CustomTextField extends StatelessWidget {
   final bool obscureText;
   final bool showVisibilityIcon;
   final bool isPasswordVisible;
+  final FocusNode? focusNode;
   final ValueChanged<String>? onChanged;
+  final ValueChanged<String>? onSubmitted;
   final VoidCallback? onSuffixIconPressed;
 
   const CustomTextField({
@@ -20,6 +22,8 @@ class CustomTextField extends StatelessWidget {
     this.isPasswordVisible = false,
     this.onSuffixIconPressed,
     this.onChanged,
+    this.onSubmitted,
+    this.focusNode,
   });
 
   @override
@@ -28,6 +32,7 @@ class CustomTextField extends StatelessWidget {
       controller: controller,
       obscureText: obscureText && !isPasswordVisible,
       onChanged: onChanged,
+      onSubmitted: onSubmitted,
       decoration: InputDecoration(
         prefixIcon: Padding(
           padding: const EdgeInsets.all(12.0),

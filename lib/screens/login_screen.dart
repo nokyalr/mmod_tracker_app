@@ -18,6 +18,8 @@ class LoginScreenState extends State<LoginScreen> {
   bool _isPasswordVisible = false;
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final FocusNode _usernameFocusNode = FocusNode();
+  final FocusNode _passwordFocusNode = FocusNode();
   bool _isLoading = false;
 
   Future<void> _handleLogin() async {
@@ -55,6 +57,15 @@ class LoginScreenState extends State<LoginScreen> {
   }
 
   @override
+  void dispose() {
+    _usernameController.dispose();
+    _passwordController.dispose();
+    _usernameFocusNode.dispose();
+    _passwordFocusNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
@@ -89,13 +100,18 @@ class LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 30),
                 CustomTextField(
                   controller: _usernameController,
+                  focusNode: _usernameFocusNode,
                   hintText: 'Username',
                   prefixIconPath: 'assets/images/user.png',
                   showVisibilityIcon: false,
+                  onSubmitted: (_) {
+                    _passwordFocusNode.requestFocus();
+                  },
                 ),
                 const SizedBox(height: 20),
                 CustomTextField(
                   controller: _passwordController,
+                  focusNode: _passwordFocusNode,
                   hintText: 'Password',
                   prefixIconPath: 'assets/images/padlock.png',
                   obscureText: true,
@@ -104,6 +120,9 @@ class LoginScreenState extends State<LoginScreen> {
                     setState(() {
                       _isPasswordVisible = !_isPasswordVisible;
                     });
+                  },
+                  onSubmitted: (_) {
+                    _handleLogin();
                   },
                 ),
                 const SizedBox(height: 50),
