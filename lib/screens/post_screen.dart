@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:mood_tracker_app/screens/home_screen.dart';
-import 'package:logger/logger.dart';
 
 void main() {
   runApp(MaterialApp(
     home: Scaffold(
       body: Center(
-        child: MoodDialog(
-          onMoodSelected: (score) {},
-          onNextPressed: () {},
-        ),
+        child: MoodDialog(onMoodSelected: (score) {}, onNextPressed: () {}),
       ),
     ),
   ));
@@ -19,14 +15,10 @@ class MoodDialog extends StatefulWidget {
   final Function(int) onMoodSelected;
   final VoidCallback onNextPressed;
 
-  const MoodDialog({
-    super.key,
-    required this.onMoodSelected,
-    required this.onNextPressed,
-  });
+  const MoodDialog({required this.onMoodSelected, required this.onNextPressed});
 
   @override
-  State<MoodDialog> createState() => _MoodDialogState();
+  _MoodDialogState createState() => _MoodDialogState();
 }
 
 class _MoodDialogState extends State<MoodDialog> {
@@ -37,25 +29,17 @@ class _MoodDialogState extends State<MoodDialog> {
   Widget build(BuildContext context) {
     return Dialog(
       insetPadding: const EdgeInsets.all(16),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(
-              child: Text(
-                "How are you today?",
+            Text("How are you today?",
                 style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFFE68C52),
-                ),
-              ),
-            ),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFFE68C52))),
             const SizedBox(height: 16),
             GestureDetector(
               onTap: () => _selectDate(context),
@@ -63,23 +47,14 @@ class _MoodDialogState extends State<MoodDialog> {
                 padding:
                     const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                 decoration: BoxDecoration(
-                  border: Border.all(color: const Color(0xFFE68C52)),
-                  borderRadius: BorderRadius.circular(12),
-                ),
+                    border: Border.all(color: Color(0xFFE68C52)),
+                    borderRadius: BorderRadius.circular(12)),
                 child: Row(
                   children: [
-                    const Icon(
-                      Icons.calendar_today,
-                      color: Color(0xFFE68C52),
-                    ),
-                    const SizedBox(width: 8),
+                    Icon(Icons.calendar_today, color: Color(0xFFE68C52)),
+                    SizedBox(width: 8),
                     Text(
-                      "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}",
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 16,
-                      ),
-                    ),
+                        "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}"),
                   ],
                 ),
               ),
@@ -87,50 +62,18 @@ class _MoodDialogState extends State<MoodDialog> {
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildMoodImage(context, 'assets/images/bad.png', 1),
-                _buildMoodImage(context, 'assets/images/poor.png', 2),
-                _buildMoodImage(context, 'assets/images/medium.png', 3),
-                _buildMoodImage(context, 'assets/images/good.png', 4),
-                _buildMoodImage(context, 'assets/images/excellent.png', 5),
-              ],
+              children: [1, 2, 3, 4, 5]
+                  .map((score) => _buildMoodImage(score))
+                  .toList(),
             ),
             const SizedBox(height: 24),
             Align(
               alignment: Alignment.centerRight,
               child: ElevatedButton(
-                onPressed: () {
-                  if (selectedMoodScore != null) {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const MoodDetailsPage(),
-                      ),
-                    );
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Please select a mood first!'),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
-                  }
-                },
+                onPressed: _onNextPressed,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFE68C52),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  child: Text(
-                    "Next",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
+                    backgroundColor: Color(0xFFE68C52)),
+                child: Text("Next", style: TextStyle(color: Color(0xFFFfFFFF))),
               ),
             ),
           ],
@@ -139,123 +82,143 @@ class _MoodDialogState extends State<MoodDialog> {
     );
   }
 
-  Widget _buildMoodImage(BuildContext context, String imagePath, int score) {
+  Widget _buildMoodImage(int score) {
     return GestureDetector(
       onTap: () {
         setState(() {
-          selectedMoodScore = score;
-          widget.onMoodSelected(score);
+          if (selectedMoodScore == score) {
+            selectedMoodScore = null; // Deselection if the same item is tapped
+            widget.onMoodSelected(-1); // Pass deselection to parent
+          } else {
+            selectedMoodScore = score;
+            widget.onMoodSelected(score); // Update mood selection
+          }
         });
       },
       child: Opacity(
         opacity: selectedMoodScore == score ? 1.0 : 0.4,
         child: Image.asset(
-          imagePath,
-          width: 42,
-          height: 42,
-        ),
+            'assets/images/${[
+              'bad',
+              'poor',
+              'medium',
+              'good',
+              'excellent'
+            ][score - 1]}.png',
+            width: 42,
+            height: 42),
       ),
     );
   }
 
   Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: selectedDate,
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
-    );
+    final picked = await showDatePicker(
+        context: context,
+        initialDate: selectedDate,
+        firstDate: DateTime(2000),
+        lastDate: DateTime(2100));
     if (picked != null && picked != selectedDate) {
       setState(() {
         selectedDate = picked;
       });
     }
   }
+
+  void _onNextPressed() {
+    if (selectedMoodScore != null) {
+      showDialog(
+          context: context,
+          builder: (context) =>
+              MoodDetailsPage(selectedMoodScore: selectedMoodScore!));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Please select a mood first!'),
+          backgroundColor: Colors.red));
+    }
+  }
 }
 
-class MoodDetailsPage extends StatelessWidget {
-  const MoodDetailsPage({super.key});
+class MoodDetailsPage extends StatefulWidget {
+  final int selectedMoodScore;
+
+  const MoodDetailsPage({required this.selectedMoodScore});
+
+  @override
+  _MoodDetailsPageState createState() => _MoodDetailsPageState();
+}
+
+class _MoodDetailsPageState extends State<MoodDetailsPage> {
+  int? selectedMoodScore;
+  late int initialMoodScore; // Untuk menyimpan mood awal yang tidak berubah
+  String? selectedItem; // Menyimpan item yang dipilih pada mood
+
+  @override
+  void initState() {
+    super.initState();
+    selectedMoodScore = widget.selectedMoodScore;
+    initialMoodScore = selectedMoodScore!;
+    selectedItem = null; // Tidak ada item yang dipilih pada awalnya
+  }
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
       insetPadding: const EdgeInsets.all(16),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 IconButton(
-                  icon: const Icon(
-                    Icons.arrow_back,
-                    color: Colors.orange,
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
+                  icon: Icon(Icons.arrow_back, color: Color(0xFFE68C52)),
+                  onPressed: () => Navigator.pop(context),
                 ),
-                const Text(
-                  "Isn't anything under control?",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.orange,
-                  ),
-                  textAlign: TextAlign.center,
+                SizedBox(width: 4),
+                Image.asset(
+                  _getMoodImagePath(initialMoodScore),
+                  width: 28,
+                  height: 28,
                 ),
-                const SizedBox(width: 48),
               ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              _getMoodQuestionText(),
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFFE68C52)),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
             GridView.count(
               shrinkWrap: true,
               crossAxisCount: 2,
-              crossAxisSpacing: 8,
-              mainAxisSpacing: 8,
-              children: [
-                _buildMoodOption(
-                    context, "assets/images/depression.png", "Depression"),
-                _buildMoodOption(
-                    context, "assets/images/anxiety (1).png", "Anxiety"),
-                _buildMoodOption(
-                    context, "assets/images/anxiety.png", "Confused"),
-                _buildMoodOption(context, "assets/images/anger.png", "Anger"),
-              ],
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
+              childAspectRatio: 2,
+              children: _getMoodOptions()
+                  .map((label) => _buildMoodOption(label))
+                  .toList(),
             ),
             const SizedBox(height: 16),
             Align(
               alignment: Alignment.centerRight,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
+                    backgroundColor: Color(0xFFE68C52)),
                 onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => NoteScreen(),
-                    ),
+                  showDialog(
+                    context: context,
+                    builder: (context) =>
+                        NoteScreen(selectedMoodScore: selectedMoodScore!),
                   );
                 },
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  child: Text(
-                    "Next",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
+                child: Text("Next", style: TextStyle(color: Color(0xFFFFfFFF))),
               ),
             ),
           ],
@@ -263,165 +226,184 @@ class MoodDetailsPage extends StatelessWidget {
       ),
     );
   }
-}
 
-Widget _buildMoodOption(BuildContext context, String imagePath, String label) {
-  bool isSelected =
-      false; // Status lokal untuk mengetahui apakah gambar dipilih
+  String _getMoodQuestionText() {
+    switch (selectedMoodScore) {
+      case 1:
+        return "Isn’t anything under control?"; // Bad mood
+      case 2:
+        return "Is everything okay?"; // Poor mood
+      case 3:
+        return "Is there anything happened?"; // Medium mood
+      case 4:
+        return "Do you have something to share?"; // Good mood
+      case 5:
+        return "Great! What are you grateful for?"; // Excellent mood
+      default:
+        return "";
+    }
+  }
 
-  return StatefulBuilder(
-    builder: (context, setState) {
-      return GestureDetector(
-        onTap: () {
-          setState(() {
-            isSelected = !isSelected; // Mengubah status saat gambar diklik
-          });
-        },
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? Colors.orange.withOpacity(0.2)
-                    : Colors.transparent, // Warna berubah saat dipilih
-                border: Border.all(color: Colors.orange),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Image.asset(
-                imagePath,
-                width: 50,
-                height: 50,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              label,
-              style: const TextStyle(fontSize: 14, color: Colors.orange),
-            ),
-          ],
+  List<String> _getMoodOptions() {
+    switch (selectedMoodScore) {
+      case 1:
+        return ["Depressed", "Anxious", "Angry", "Overwhelmed"];
+      case 2:
+        return ["Sad", "Tired", "Frustrated", "Disappointed"];
+      case 3:
+        return ["Okay", "Satisfied", "Hopeful", "Relaxed"];
+      case 4:
+        return ["Happy", "Excited", "Proud", "Loved"];
+      case 5:
+        return ["Euphoric", "Inspired", "Grateful", "Accomplished"];
+      default:
+        return [];
+    }
+  }
+
+  Widget _buildMoodOption(String label) {
+    bool isSelected = selectedItem == label; // Cek apakah item ini dipilih
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          selectedItem =
+              isSelected ? null : label; // Deselect jika sudah dipilih
+        });
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: isSelected ? Color(0xFFE68C52) : Color(0xFFFFFFFF),
+          border: Border.all(color: Color(0xFFE68C52)),
+          borderRadius: BorderRadius.circular(20),
         ),
-      );
-    },
-  );
+        alignment: Alignment.center,
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: isSelected ? Color(0xFFFFFFFF) : Color(0xFFE68C52),
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+  }
+
+  String _getMoodImagePath(int score) {
+    switch (score) {
+      case 1:
+        return 'assets/images/bad.png';
+      case 2:
+        return 'assets/images/poor.png';
+      case 3:
+        return 'assets/images/medium.png';
+      case 4:
+        return 'assets/images/good.png';
+      case 5:
+        return 'assets/images/excellent.png';
+      default:
+        return 'assets/images/medium.png'; // Default image
+    }
+  }
 }
 
 class NoteScreen extends StatelessWidget {
-  NoteScreen({super.key});
-  final logger = Logger();
+  final int selectedMoodScore;
+
+  NoteScreen({required this.selectedMoodScore});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFFE68C52)),
-          onPressed: () {
-            Navigator.of(context).pop(); // Navigasi kembali
-          },
-        ),
-        backgroundColor: Colors.white,
-        elevation: 0,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+    return Dialog(
+      insetPadding: const EdgeInsets.all(16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: const Color(0xFFE68C52)),
-                  borderRadius: BorderRadius.circular(12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.arrow_back, color: Color(0xFFE68C52)),
+                  onPressed: () => Navigator.pop(context),
                 ),
-                padding: const EdgeInsets.all(8.0),
-                child: const TextField(
-                  maxLines: null, // Mendukung input teks multiline
-                  keyboardType: TextInputType.multiline,
-                  decoration: InputDecoration(
+                SizedBox(width: 4),
+                Image.asset(
+                  _getMoodImagePath(
+                      selectedMoodScore), // Gunakan selectedMoodScore yang konsisten
+                  width: 28,
+                  height: 28,
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text("Type your notes here...",
+                style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFFE68C52))),
+            const SizedBox(height: 32),
+            Container(
+              height: 120,
+              decoration: BoxDecoration(
+                  border: Border.all(color: Color(0xFFE68C52)),
+                  borderRadius: BorderRadius.circular(12)),
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                maxLines: null,
+                decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: "Type your notes here...",
-                  ),
-                  style: TextStyle(fontSize: 16, color: Colors.black),
-                ),
+                    hintStyle: TextStyle(color: Color(0xFFA6A6A6))),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 18),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ElevatedButton(
-                  onPressed: () {
-                    // Logika tombol Save
-                    logger.i("Save button pressed!");
-
-                    // Menampilkan pesan dan kembali ke home screen
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("Note successfully saved"),
-                      ),
-                    );
-                    Navigator.of(context)
-                      ..push(
-                        MaterialPageRoute(
-                          builder: (context) => HomeScreen(),
-                        ),
-                      ); // Kembali ke home screen
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFE68C52),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 12,
-                      horizontal: 32,
-                    ),
-                  ),
-                  child: const Text(
-                    "save",
-                    style: TextStyle(fontSize: 16, color: Colors.white),
-                  ),
-                ),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFFE68C52)),
+                    onPressed: () => Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (_) => HomeScreen())),
+                    child: Text("Save",
+                        style: TextStyle(color: Color(0xFFFFFFFF)))),
                 ElevatedButton(
-                  onPressed: () {
-                    // Logika tombol Share
-                    logger.i("Share button pressed!");
-
-                    // Menampilkan pesan dan kembali ke home screen
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("Note successfully shared"),
-                      ),
-                    );
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => HomeScreen(),
-                      ),
-                    ); // Kembali ke home screen
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFE68C52),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 12,
-                      horizontal: 32,
-                    ),
-                  ),
-                  child: const Text(
-                    "share",
-                    style: TextStyle(fontSize: 16, color: Colors.white),
-                  ),
-                ),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFFE68C52)),
+                    onPressed: () => Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (_) => HomeScreen())),
+                    child: Text(
+                      "Share",
+                      style: TextStyle(color: Color(0xFFFFFFFF)),
+                    )),
               ],
             ),
           ],
         ),
       ),
-      backgroundColor: Colors.white,
     );
+  }
+
+  // Helper method to get the correct mood image path
+  String _getMoodImagePath(int score) {
+    switch (score) {
+      case 1:
+        return 'assets/images/bad.png';
+      case 2:
+        return 'assets/images/poor.png';
+      case 3:
+        return 'assets/images/medium.png';
+      case 4:
+        return 'assets/images/good.png';
+      case 5:
+        return 'assets/images/excellent.png';
+      default:
+        return 'assets/images/medium.png'; // Default image
+    }
   }
 }
