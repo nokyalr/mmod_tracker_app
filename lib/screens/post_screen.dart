@@ -1,14 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:mood_tracker_app/widgets/confirm_button.dart';
-import 'package:mood_tracker_app/screens/mood_details.dart';
+import 'package:mood_tracker_app/screens/home_screen.dart';
+import 'package:logger/logger.dart';
+
+void main() {
+  runApp(MaterialApp(
+    home: Scaffold(
+      body: Center(
+        child: MoodDialog(
+          onMoodSelected: (score) {},
+          onNextPressed: () {},
+        ),
+      ),
+    ),
+  ));
+}
 
 class MoodDialog extends StatefulWidget {
   final Function(int) onMoodSelected;
+  final VoidCallback onNextPressed;
 
   const MoodDialog({
     super.key,
     required this.onMoodSelected,
-    required Null Function() onNextPressed,
+    required this.onNextPressed,
   });
 
   @override
@@ -84,17 +98,15 @@ class _MoodDialogState extends State<MoodDialog> {
             const SizedBox(height: 24),
             Align(
               alignment: Alignment.centerRight,
-              child: ConfirmButton(
-                text: "Next",
+              child: ElevatedButton(
                 onPressed: () {
                   if (selectedMoodScore != null) {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => MoodDetailsPage(),
+                        builder: (context) => const MoodDetailsPage(),
                       ),
                     );
                   } else {
-                    // Tampilkan pesan jika mood belum dipilih
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Please select a mood first!'),
@@ -103,7 +115,22 @@ class _MoodDialogState extends State<MoodDialog> {
                     );
                   }
                 },
-                width: 100,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFE68C52),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  child: Text(
+                    "Next",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
               ),
             ),
           ],
@@ -143,5 +170,258 @@ class _MoodDialogState extends State<MoodDialog> {
         selectedDate = picked;
       });
     }
+  }
+}
+
+class MoodDetailsPage extends StatelessWidget {
+  const MoodDetailsPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      insetPadding: const EdgeInsets.all(16),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                  icon: const Icon(
+                    Icons.arrow_back,
+                    color: Colors.orange,
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                const Text(
+                  "Isn't anything under control?",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.orange,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(width: 48),
+              ],
+            ),
+            const SizedBox(height: 16),
+            GridView.count(
+              shrinkWrap: true,
+              crossAxisCount: 2,
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 8,
+              children: [
+                _buildMoodOption(
+                    context, "assets/images/depression.png", "Depression"),
+                _buildMoodOption(
+                    context, "assets/images/anxiety (1).png", "Anxiety"),
+                _buildMoodOption(
+                    context, "assets/images/anxiety.png", "Confused"),
+                _buildMoodOption(context, "assets/images/anger.png", "Anger"),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Align(
+              alignment: Alignment.centerRight,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => NoteScreen(),
+                    ),
+                  );
+                },
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  child: Text(
+                    "Next",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+Widget _buildMoodOption(BuildContext context, String imagePath, String label) {
+  bool isSelected =
+      false; // Status lokal untuk mengetahui apakah gambar dipilih
+
+  return StatefulBuilder(
+    builder: (context, setState) {
+      return GestureDetector(
+        onTap: () {
+          setState(() {
+            isSelected = !isSelected; // Mengubah status saat gambar diklik
+          });
+        },
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? Colors.orange.withOpacity(0.2)
+                    : Colors.transparent, // Warna berubah saat dipilih
+                border: Border.all(color: Colors.orange),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Image.asset(
+                imagePath,
+                width: 50,
+                height: 50,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: const TextStyle(fontSize: 14, color: Colors.orange),
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
+
+class NoteScreen extends StatelessWidget {
+  NoteScreen({super.key});
+  final logger = Logger();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Color(0xFFE68C52)),
+          onPressed: () {
+            Navigator.of(context).pop(); // Navigasi kembali
+          },
+        ),
+        backgroundColor: Colors.white,
+        elevation: 0,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: const Color(0xFFE68C52)),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding: const EdgeInsets.all(8.0),
+                child: const TextField(
+                  maxLines: null, // Mendukung input teks multiline
+                  keyboardType: TextInputType.multiline,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: "Type your notes here...",
+                  ),
+                  style: TextStyle(fontSize: 16, color: Colors.black),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    // Logika tombol Save
+                    logger.i("Save button pressed!");
+
+                    // Menampilkan pesan dan kembali ke home screen
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Note successfully saved"),
+                      ),
+                    );
+                    Navigator.of(context)
+                      ..push(
+                        MaterialPageRoute(
+                          builder: (context) => HomeScreen(),
+                        ),
+                      ); // Kembali ke home screen
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFE68C52),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 32,
+                    ),
+                  ),
+                  child: const Text(
+                    "save",
+                    style: TextStyle(fontSize: 16, color: Colors.white),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    // Logika tombol Share
+                    logger.i("Share button pressed!");
+
+                    // Menampilkan pesan dan kembali ke home screen
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Note successfully shared"),
+                      ),
+                    );
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => HomeScreen(),
+                      ),
+                    ); // Kembali ke home screen
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFE68C52),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 32,
+                    ),
+                  ),
+                  child: const Text(
+                    "share",
+                    style: TextStyle(fontSize: 16, color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+      backgroundColor: Colors.white,
+    );
   }
 }
