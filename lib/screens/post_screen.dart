@@ -361,7 +361,7 @@ class NoteScreen extends StatelessWidget {
                     hintStyle: TextStyle(color: Color(0xFFA6A6A6))),
               ),
             ),
-            const SizedBox(height: 18),
+            const SizedBox(height: 46),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
