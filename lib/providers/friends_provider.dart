@@ -56,9 +56,6 @@ class FriendsProvider with ChangeNotifier {
       }
     } catch (e) {
       _friends = [];
-      if (context.mounted) {
-        showMessage('Failed to load friends', context);
-      }
     } finally {
       notifyListeners();
     }
@@ -202,6 +199,34 @@ class FriendsProvider with ChangeNotifier {
     } catch (e) {
       if (context.mounted) {
         showMessage("Failed to reject friend request", context);
+      }
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  Future<void> removeFriend(
+      int userId, int friendId, BuildContext context) async {
+    try {
+      final data = await makeApiRequest(
+        '${APIConfig.getFriends}?action=remove_friend',
+        body: {'user_id': userId, 'friend_id': friendId},
+        isPost: true,
+      );
+
+      String message = data['status'] == 'success'
+          ? "Friend removed successfully."
+          : "Failed to remove friend.";
+      if (context.mounted) {
+        showMessage(message, context);
+      }
+
+      if (data['status'] == 'success') {
+        _friends.removeWhere((friend) => friend['user_id'] == friendId);
+      }
+    } catch (e) {
+      if (context.mounted) {
+        showMessage("Failed to remove friend", context);
       }
     } finally {
       notifyListeners();

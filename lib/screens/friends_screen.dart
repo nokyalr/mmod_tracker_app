@@ -59,6 +59,39 @@ class FriendsScreenState extends State<FriendsScreen> {
     });
   }
 
+  void _showConfirmationDialog(BuildContext context, Function onConfirm) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Remove Friend'),
+          content: Text(
+            'Are you sure you want to remove this friend?',
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text(
+                'Cancel',
+                style: TextStyle(color: Color(0xFFE68C52)),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child:
+                  Text('Confirm', style: TextStyle(color: Color(0xFFE68C52))),
+              onPressed: () {
+                onConfirm();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final friendsProvider = Provider.of<FriendsProvider>(context);
@@ -156,26 +189,29 @@ class FriendsScreenState extends State<FriendsScreen> {
                                   'assets/images/default_profile.png'),
                           radius: 24,
                         ),
-                        const SizedBox(width: 12),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              friend['name'] ?? '',
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
+                        SizedBox(width: 16),
+                        Expanded(
+                          child: Text(
+                            friend['name'],
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.black,
                             ),
-                            Text(
-                              '@${friend['username']}',
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: Color(0xFFA6A6A6),
-                              ),
-                            ),
-                          ],
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.close, color: Colors.red),
+                          onPressed: () {
+                            final userId = Provider.of<UserProvider>(context,
+                                    listen: false)
+                                .user?['user_id'];
+                            if (userId != null) {
+                              _showConfirmationDialog(context, () {
+                                friendsProvider.removeFriend(
+                                    userId, friend['user_id'], context);
+                              });
+                            }
+                          },
                         ),
                       ],
                     ),
