@@ -117,7 +117,6 @@ class MoodDetailsPageState extends State<MoodDetailsPage> {
           border: Border.all(color: const Color(0xFFE68C52)),
           borderRadius: BorderRadius.circular(12),
         ),
-        padding: const EdgeInsets.all(8),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
