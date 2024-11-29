@@ -26,7 +26,7 @@ class PostProvider with ChangeNotifier {
         final data = json.decode(response.body) as List<dynamic>;
         _posts = data.map((item) => item as Map<String, dynamic>).toList();
       } else {
-        throw 'Failed to load posts: ${response.statusCode}';
+        throw Exception('Failed to load posts: ${response.statusCode}');
       }
     } catch (error) {
       print('Error fetching posts: $error');
@@ -51,9 +51,9 @@ class PostProvider with ChangeNotifier {
       'user_id': userId,
       'mood_id': moodId,
       'mood_score': moodScore,
-      // 'content': content,
-      // 'is_posted': isPosted ? 1 : 0, // Convert boolean to integer (1 or 0)
-      // 'post_date': postDate,
+      'content': content,
+      'is_posted': isPosted ? 1 : 0, // Convert boolean to integer (1 or 0)
+      'post_date': postDate,
     };
 
     try {

@@ -17,7 +17,14 @@ class AvatarSelectorScreenState extends State<AvatarSelectorScreen> {
     'assets/images/people3.png',
     'assets/images/people4.png',
     'assets/images/people5.png',
-    'assets/images/people6.png',
+    'assets/images/people7.png',
+    'assets/images/people8.png',
+    'assets/images/people9.png',
+    'assets/images/people10.png',
+    'assets/images/people11.png',
+    'assets/images/people12.png',
+    'assets/images/people13.png',
+    'assets/images/people14.png',
   ];
 
   @override
