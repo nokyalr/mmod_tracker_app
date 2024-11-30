@@ -24,8 +24,11 @@ class HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     Future.microtask(() {
-      if (!mounted) return;
-      Provider.of<PostProvider>(context, listen: false).fetchPosts();
+      final userId =
+          Provider.of<UserProvider>(context, listen: false).user?['user_id'];
+      if (userId != null) {
+        Provider.of<PostProvider>(context, listen: false).fetchPosts(userId);
+      }
     });
   }
 
@@ -253,11 +256,8 @@ class HomeScreenState extends State<HomeScreen> {
             context: context,
             builder: (context) {
               return MoodDialog(
-                onMoodSelected: (int moodScore) {
-                  logger.i("Mood selected: $moodScore");
-                },
+                onMoodSelected: (int moodScore) {},
                 onNextPressed: () {
-                  logger.i("Next button pressed!");
                   Navigator.pop(context);
                 },
               );

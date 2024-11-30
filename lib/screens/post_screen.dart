@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mood_tracker_app/screens/home_screen.dart';
+import 'package:provider/provider.dart';
+import '../providers/post_provider.dart';
+import '../providers/user_provider.dart';
+import 'home_screen.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -15,13 +18,14 @@ class MoodDialog extends StatefulWidget {
   final Function(int) onMoodSelected;
   final VoidCallback onNextPressed;
 
-  const MoodDialog({required this.onMoodSelected, required this.onNextPressed});
+  const MoodDialog(
+      {super.key, required this.onMoodSelected, required this.onNextPressed});
 
   @override
-  _MoodDialogState createState() => _MoodDialogState();
+  MoodDialogState createState() => MoodDialogState();
 }
 
-class _MoodDialogState extends State<MoodDialog> {
+class MoodDialogState extends State<MoodDialog> {
   DateTime selectedDate = DateTime.now();
   int? selectedMoodScore;
 
@@ -128,8 +132,10 @@ class _MoodDialogState extends State<MoodDialog> {
     if (selectedMoodScore != null) {
       showDialog(
           context: context,
-          builder: (context) =>
-              MoodDetailsPage(selectedMoodScore: selectedMoodScore!));
+          builder: (context) => MoodDetailsPage(
+                selectedMoodScore: selectedMoodScore!,
+                selectedDate: selectedDate,
+              ));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('Please select a mood first!'),
@@ -140,17 +146,20 @@ class _MoodDialogState extends State<MoodDialog> {
 
 class MoodDetailsPage extends StatefulWidget {
   final int selectedMoodScore;
+  final DateTime selectedDate;
 
-  const MoodDetailsPage({required this.selectedMoodScore});
+  const MoodDetailsPage(
+      {super.key, required this.selectedMoodScore, required this.selectedDate});
 
   @override
-  _MoodDetailsPageState createState() => _MoodDetailsPageState();
+  MoodDetailsPageState createState() => MoodDetailsPageState();
 }
 
-class _MoodDetailsPageState extends State<MoodDetailsPage> {
+class MoodDetailsPageState extends State<MoodDetailsPage> {
   int? selectedMoodScore;
   late int initialMoodScore; // Untuk menyimpan mood awal yang tidak berubah
   String? selectedItem; // Menyimpan item yang dipilih pada mood
+  int? selectedMoodId; // Menyimpan mood_id yang dipilih
 
   @override
   void initState() {
@@ -211,13 +220,7 @@ class _MoodDetailsPageState extends State<MoodDetailsPage> {
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFFE68C52)),
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) =>
-                        NoteScreen(selectedMoodScore: selectedMoodScore!),
-                  );
-                },
+                onPressed: _onNextPressed,
                 child: Text("Next", style: TextStyle(color: Color(0xFFFFfFFF))),
               ),
             ),
@@ -244,31 +247,62 @@ class _MoodDetailsPageState extends State<MoodDetailsPage> {
     }
   }
 
-  List<String> _getMoodOptions() {
+  List<Map<String, dynamic>> _getMoodOptions() {
     switch (selectedMoodScore) {
       case 1:
-        return ["Depressed", "Anxious", "Angry", "Overwhelmed"];
+        return [
+          {"mood_id": 1, "label": "Depressed"},
+          {"mood_id": 2, "label": "Anxious"},
+          {"mood_id": 3, "label": "Angry"},
+          {"mood_id": 4, "label": "Overwhelmed"}
+        ];
       case 2:
-        return ["Sad", "Tired", "Frustrated", "Disappointed"];
+        return [
+          {"mood_id": 5, "label": "Sad"},
+          {"mood_id": 6, "label": "Tired"},
+          {"mood_id": 7, "label": "Frustrated"},
+          {"mood_id": 8, "label": "Disappointed"}
+        ];
       case 3:
-        return ["Okay", "Satisfied", "Hopeful", "Relaxed"];
+        return [
+          {"mood_id": 9, "label": "Okay"},
+          {"mood_id": 10, "label": "Satisfied"},
+          {"mood_id": 11, "label": "Hopeful"},
+          {"mood_id": 12, "label": "Relaxed"}
+        ];
       case 4:
-        return ["Happy", "Excited", "Proud", "Loved"];
+        return [
+          {"mood_id": 13, "label": "Happy"},
+          {"mood_id": 14, "label": "Excited"},
+          {"mood_id": 15, "label": "Proud"},
+          {"mood_id": 16, "label": "Loved"}
+        ];
       case 5:
-        return ["Euphoric", "Inspired", "Grateful", "Accomplished"];
+        return [
+          {"mood_id": 17, "label": "Euphoric"},
+          {"mood_id": 18, "label": "Inspired"},
+          {"mood_id": 19, "label": "Grateful"},
+          {"mood_id": 20, "label": "Accomplished"}
+        ];
       default:
         return [];
     }
   }
 
-  Widget _buildMoodOption(String label) {
-    bool isSelected = selectedItem == label; // Cek apakah item ini dipilih
+  Widget _buildMoodOption(Map<String, dynamic> moodOption) {
+    bool isSelected =
+        selectedItem == moodOption["label"]; // Cek apakah item ini dipilih
 
     return GestureDetector(
       onTap: () {
         setState(() {
-          selectedItem =
-              isSelected ? null : label; // Deselect jika sudah dipilih
+          if (isSelected) {
+            selectedItem = null; // Deselect jika sudah dipilih
+            selectedMoodId = null; // Reset mood_id
+          } else {
+            selectedItem = moodOption["label"];
+            selectedMoodId = moodOption["mood_id"];
+          }
         });
       },
       child: Container(
@@ -279,7 +313,7 @@ class _MoodDetailsPageState extends State<MoodDetailsPage> {
         ),
         alignment: Alignment.center,
         child: Text(
-          label,
+          moodOption["label"],
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
@@ -289,6 +323,26 @@ class _MoodDetailsPageState extends State<MoodDetailsPage> {
         ),
       ),
     );
+  }
+
+  void _onNextPressed() {
+    if (selectedItem != null) {
+      showDialog(
+        context: context,
+        builder: (context) => NoteScreen(
+          selectedMoodScore: selectedMoodScore!,
+          selectedMoodId: selectedMoodId!,
+          selectedDate: widget.selectedDate,
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please select a sub mood first!'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   String _getMoodImagePath(int score) {
@@ -311,11 +365,20 @@ class _MoodDetailsPageState extends State<MoodDetailsPage> {
 
 class NoteScreen extends StatelessWidget {
   final int selectedMoodScore;
+  final int selectedMoodId;
+  final DateTime selectedDate;
 
-  NoteScreen({required this.selectedMoodScore});
+  const NoteScreen(
+      {super.key,
+      required this.selectedMoodScore,
+      required this.selectedMoodId,
+      required this.selectedDate});
 
   @override
   Widget build(BuildContext context) {
+    final postProvider = Provider.of<PostProvider>(context, listen: false);
+    final TextEditingController contentController = TextEditingController();
+
     return Dialog(
       insetPadding: const EdgeInsets.all(16),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -333,8 +396,7 @@ class NoteScreen extends StatelessWidget {
                 ),
                 SizedBox(width: 4),
                 Image.asset(
-                  _getMoodImagePath(
-                      selectedMoodScore), // Gunakan selectedMoodScore yang konsisten
+                  _getMoodImagePath(selectedMoodScore),
                   width: 28,
                   height: 28,
                 ),
@@ -354,6 +416,7 @@ class NoteScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12)),
               padding: const EdgeInsets.all(8.0),
               child: TextField(
+                controller: contentController,
                 maxLines: null,
                 decoration: InputDecoration(
                     border: InputBorder.none,
@@ -361,22 +424,94 @@ class NoteScreen extends StatelessWidget {
                     hintStyle: TextStyle(color: Color(0xFFA6A6A6))),
               ),
             ),
-            const SizedBox(height: 46),
+            const SizedBox(height: 52),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ElevatedButton(
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xFFE68C52)),
-                    onPressed: () => Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (_) => HomeScreen())),
+                    onPressed: () async {
+                      if (contentController.text.isNotEmpty) {
+                        final userId =
+                            Provider.of<UserProvider>(context, listen: false)
+                                .user?['user_id'];
+                        if (userId != null) {
+                          final success = await postProvider.createPost(
+                            userId: userId,
+                            moodId: selectedMoodId,
+                            moodScore: selectedMoodScore,
+                            content: contentController.text,
+                            isPosted: false,
+                            postDate: selectedDate.toIso8601String(),
+                          );
+                          if (success) {
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => HomeScreen()));
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Failed to create post')),
+                            );
+                          }
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('User not logged in')),
+                          );
+                        }
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Please type a note first!'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
+                    },
                     child: Text("Save",
                         style: TextStyle(color: Color(0xFFFFFFFF)))),
                 ElevatedButton(
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xFFE68C52)),
-                    onPressed: () => Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (_) => HomeScreen())),
+                    onPressed: () async {
+                      if (contentController.text.isNotEmpty) {
+                        final userId =
+                            Provider.of<UserProvider>(context, listen: false)
+                                .user?['user_id'];
+                        if (userId != null) {
+                          final success = await postProvider.createPost(
+                            userId: userId,
+                            moodId: selectedMoodId,
+                            moodScore: selectedMoodScore,
+                            content: contentController.text,
+                            isPosted: true,
+                            postDate: selectedDate.toIso8601String(),
+                          );
+                          if (success) {
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => HomeScreen()));
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Failed to create post')),
+                            );
+                          }
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('User not logged in')),
+                          );
+                        }
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Please type a note first!'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
+                    },
                     child: Text(
                       "Share",
                       style: TextStyle(color: Color(0xFFFFFFFF)),
@@ -389,7 +524,6 @@ class NoteScreen extends StatelessWidget {
     );
   }
 
-  // Helper method to get the correct mood image path
   String _getMoodImagePath(int score) {
     switch (score) {
       case 1:

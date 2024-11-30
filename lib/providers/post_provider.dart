@@ -1,8 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:logger/logger.dart';
 import 'dart:convert';
 import '../config/constants.dart';
+
+final Logger _logger = Logger();
 
 class PostProvider with ChangeNotifier {
   List<Map<String, dynamic>> _posts = [];
@@ -12,11 +15,11 @@ class PostProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
 
   // Fetch all posts from the server
-  Future<void> fetchPosts() async {
+  Future<void> fetchPosts(int userId) async {
     _isLoading = true;
     notifyListeners();
 
-    final url = APIConfig.postsUrl;
+    final url = '${APIConfig.postsUrl}?user_id=$userId';
 
     try {
       final response =
@@ -29,7 +32,7 @@ class PostProvider with ChangeNotifier {
         throw Exception('Failed to load posts: ${response.statusCode}');
       }
     } catch (error) {
-      print('Error fetching posts: $error');
+      _logger.e('Error fetching posts: $error');
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -65,14 +68,14 @@ class PostProvider with ChangeNotifier {
 
       if (response.statusCode == 201) {
         // Post successfully created, optionally refetch posts
-        await fetchPosts();
+        await fetchPosts(userId);
         return true;
       } else {
-        print('Failed to create post: ${response.body}');
+        _logger.e('Failed to create post: ${response.body}');
         return false;
       }
     } catch (error) {
-      print('Error creating post: $error');
+      _logger.e('Error creating post: $error');
       return false;
     }
   }
