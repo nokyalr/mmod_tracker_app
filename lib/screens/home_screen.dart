@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mood_tracker_app/screens/report_screen.dart';
+import 'package:mood_tracker_app/screens/suggestion_screen.dart';
 import 'package:provider/provider.dart';
 import 'user_screen.dart';
 import '../providers/post_provider.dart';
@@ -7,7 +8,6 @@ import '../providers/user_provider.dart';
 import '../../widgets/bottom_navigation.dart';
 import '../../widgets/app_bar.dart';
 import 'package:mood_tracker_app/screens/post_screen.dart';
-import 'package:logger/logger.dart';
 import 'package:mood_tracker_app/screens/comment_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -19,7 +19,6 @@ class HomeScreen extends StatefulWidget {
 
 class HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
-  final logger = Logger();
 
   @override
   void initState() {
@@ -56,13 +55,13 @@ class HomeScreenState extends State<HomeScreen> {
         ),
       );
     } else if (index == 2) {
-      // Navigator.pushReplacement(
-      //   context,
-      //   PageRouteBuilder(
-      //     pageBuilder: (context, animation1, animation2) => SuggestionScreen(),
-      //     transitionDuration: Duration.zero,
-      //   ),
-      // );
+      Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+          pageBuilder: (context, animation1, animation2) => SuggestionScreen(),
+          transitionDuration: Duration.zero,
+        ),
+      );
     } else if (index == 3) {
       Navigator.pushReplacement(
         context,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mood_tracker_app/screens/suggestion_screen.dart';
 import 'package:mood_tracker_app/widgets/app_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -53,7 +54,23 @@ class _ReportScreenState extends State<ReportScreen> {
       Navigator.pushReplacement(
         context,
         PageRouteBuilder(
-          pageBuilder: (context, animation1, animation2) => const HomeScreen(),
+          pageBuilder: (context, animation1, animation2) => HomeScreen(),
+          transitionDuration: Duration.zero,
+        ),
+      );
+    } else if (index == 1) {
+      Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+          pageBuilder: (context, animation1, animation2) => ReportScreen(),
+          transitionDuration: Duration.zero,
+        ),
+      );
+    } else if (index == 2) {
+      Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+          pageBuilder: (context, animation1, animation2) => SuggestionScreen(),
           transitionDuration: Duration.zero,
         ),
       );
@@ -61,7 +78,7 @@ class _ReportScreenState extends State<ReportScreen> {
       Navigator.pushReplacement(
         context,
         PageRouteBuilder(
-          pageBuilder: (context, animation1, animation2) => const UserScreen(),
+          pageBuilder: (context, animation1, animation2) => UserScreen(),
           transitionDuration: Duration.zero,
         ),
       );

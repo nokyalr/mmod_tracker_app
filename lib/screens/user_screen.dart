@@ -4,6 +4,7 @@ import 'package:mood_tracker_app/providers/post_provider.dart';
 import 'package:mood_tracker_app/screens/edit_profile_screen.dart';
 import 'package:mood_tracker_app/screens/report_screen.dart';
 import 'package:mood_tracker_app/screens/friends_screen.dart';
+import 'package:mood_tracker_app/screens/suggestion_screen.dart';
 import 'home_screen.dart';
 import 'login_screen.dart';
 import 'package:provider/provider.dart';
@@ -41,7 +42,7 @@ class UserScreenState extends State<UserScreen> {
       Navigator.pushReplacement(
         context,
         PageRouteBuilder(
-          pageBuilder: (context, animation1, animation2) => const HomeScreen(),
+          pageBuilder: (context, animation1, animation2) => HomeScreen(),
           transitionDuration: Duration.zero,
         ),
       );
@@ -49,18 +50,23 @@ class UserScreenState extends State<UserScreen> {
       Navigator.pushReplacement(
         context,
         PageRouteBuilder(
-          pageBuilder: (context, animation1, animation2) =>
-              const ReportScreen(),
+          pageBuilder: (context, animation1, animation2) => ReportScreen(),
           transitionDuration: Duration.zero,
         ),
       );
     } else if (index == 2) {
-      // Tambahkan navigasi jika ada halaman lain
+      Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+          pageBuilder: (context, animation1, animation2) => SuggestionScreen(),
+          transitionDuration: Duration.zero,
+        ),
+      );
     } else if (index == 3) {
       Navigator.pushReplacement(
         context,
         PageRouteBuilder(
-          pageBuilder: (context, animation1, animation2) => const UserScreen(),
+          pageBuilder: (context, animation1, animation2) => UserScreen(),
           transitionDuration: Duration.zero,
         ),
       );

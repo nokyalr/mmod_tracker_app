@@ -1,11 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:logger/logger.dart';
 import 'dart:convert';
 import '../config/constants.dart';
-
-final Logger _logger = Logger();
 
 class PostProvider with ChangeNotifier {
   List<Map<String, dynamic>> _posts = [];
@@ -26,25 +23,15 @@ class PostProvider with ChangeNotifier {
     final url = '${APIConfig.postsUrl}?user_id=$userId';
 
     try {
-      final response =
-          await http.get(Uri.parse(url)).timeout(const Duration(seconds: 10));
+      final response = await http.get(Uri.parse(url));
 
       if (response.statusCode == 200) {
-        final responseBody = response.body;
-        _logger.i('Response body: $responseBody');
-
-        try {
-          final data = json.decode(responseBody) as List<dynamic>;
-          _posts = data.map((item) => item as Map<String, dynamic>).toList();
-        } catch (jsonError) {
-          _logger.e('Error parsing JSON: $jsonError');
-          throw Exception('Failed to parse JSON');
-        }
+        _posts = List<Map<String, dynamic>>.from(json.decode(response.body));
       } else {
-        throw Exception('Failed to load posts: ${response.statusCode}');
+        throw Exception('Failed to load posts');
       }
     } catch (error) {
-      _logger.e('Error fetching posts: $error');
+      rethrow;
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -83,11 +70,9 @@ class PostProvider with ChangeNotifier {
         await fetchPosts(userId);
         return true;
       } else {
-        _logger.e('Failed to create post: ${response.body}');
         return false;
       }
     } catch (error) {
-      _logger.e('Error creating post: $error');
       return false;
     }
   }
@@ -108,12 +93,10 @@ class PostProvider with ChangeNotifier {
       if (response.statusCode == 200) {
         final data = json.decode(response.body) as List<dynamic>;
         _comments = data.map((item) => item as Map<String, dynamic>).toList();
-        _logger.i('Comments fetched successfully: $_comments');
       } else {
         throw Exception('Failed to load comments');
       }
     } catch (error) {
-      _logger.e('Error fetching comments: $error');
       rethrow;
     } finally {
       notifyListeners();
@@ -176,6 +159,24 @@ class PostProvider with ChangeNotifier {
         await fetchComments(postId);
       } else {
         throw Exception('Failed to add comment');
+      }
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<String?> fetchLastSubMood(int userId) async {
+    final url =
+        '${APIConfig.postsUrl}?action=get_last_sub_mood&user_id=$userId';
+
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return data['sub_mood'];
+      } else {
+        throw Exception('Failed to load last sub mood');
       }
     } catch (error) {
       rethrow;

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'providers/user_provider.dart';
 import 'providers/post_provider.dart';
 import 'providers/friends_provider.dart';
+import 'providers/suggestion_provider.dart';
 import 'screens/login_screen.dart';
 
 void main() {
@@ -14,6 +15,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => PostProvider()),
         ChangeNotifierProvider(create: (_) => ReportProvider()),
         ChangeNotifierProvider(create: (_) => FriendsProvider()),
+        ChangeNotifierProvider(create: (_) => SuggestionProvider()),
       ],
       child: const MyApp(),
     ),
