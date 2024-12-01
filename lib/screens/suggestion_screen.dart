@@ -80,9 +80,10 @@ class SuggestionScreenState extends State<SuggestionScreen> {
   Future<void> _launchUrl(String url) async {
     final Uri uri = Uri.parse(url);
     if (await canLaunchUrl(uri)) {
-      await launchUrl(uri);
+      debugPrint('Launching URL: $url');
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
     } else {
-      throw 'Could not launch $url';
+      debugPrint('Cannot launch URL: $url');
     }
   }
 
