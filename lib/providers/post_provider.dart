@@ -10,9 +10,13 @@ final Logger _logger = Logger();
 class PostProvider with ChangeNotifier {
   List<Map<String, dynamic>> _posts = [];
   bool _isLoading = false;
+  bool _hasError = false;
+  List<Map<String, dynamic>> _comments = [];
+  List<Map<String, dynamic>> get comments => _comments;
 
   List<Map<String, dynamic>> get posts => _posts;
   bool get isLoading => _isLoading;
+  bool get hasError => _hasError;
 
   // Fetch all posts from the server
   Future<void> fetchPosts(int userId) async {
@@ -26,8 +30,16 @@ class PostProvider with ChangeNotifier {
           await http.get(Uri.parse(url)).timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
-        final data = json.decode(response.body) as List<dynamic>;
-        _posts = data.map((item) => item as Map<String, dynamic>).toList();
+        final responseBody = response.body;
+        _logger.i('Response body: $responseBody');
+
+        try {
+          final data = json.decode(responseBody) as List<dynamic>;
+          _posts = data.map((item) => item as Map<String, dynamic>).toList();
+        } catch (jsonError) {
+          _logger.e('Error parsing JSON: $jsonError');
+          throw Exception('Failed to parse JSON');
+        }
       } else {
         throw Exception('Failed to load posts: ${response.statusCode}');
       }
@@ -84,5 +96,89 @@ class PostProvider with ChangeNotifier {
   void clearPosts() {
     _posts = [];
     notifyListeners();
+  }
+
+  Future<void> fetchComments(int postId) async {
+    final url = '${APIConfig.postsUrl}?action=get_comments&post_id=$postId';
+    _hasError = false;
+
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body) as List<dynamic>;
+        _comments = data.map((item) => item as Map<String, dynamic>).toList();
+        _logger.i('Comments fetched successfully: $_comments');
+      } else {
+        throw Exception('Failed to load comments');
+      }
+    } catch (error) {
+      _logger.e('Error fetching comments: $error');
+      rethrow;
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  Future<Map<String, dynamic>?> fetchFirstComment(int postId) async {
+    final url =
+        '${APIConfig.postsUrl}?action=get_first_comment&post_id=$postId';
+
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return data;
+      } else {
+        throw Exception('Failed to load first comment');
+      }
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<int> fetchCommentCount(int postId) async {
+    final url =
+        '${APIConfig.postsUrl}?action=get_comment_count&post_id=$postId';
+
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return data['comment_count'];
+      } else {
+        throw Exception('Failed to load comment count');
+      }
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<void> addComment(int postId, int userId, String comment) async {
+    final url = '${APIConfig.postsUrl}?action=add_comment';
+
+    final Map<String, dynamic> commentData = {
+      'post_id': postId,
+      'user_id': userId,
+      'comment': comment,
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(commentData),
+      );
+
+      if (response.statusCode == 201) {
+        await fetchComments(postId);
+      } else {
+        throw Exception('Failed to add comment');
+      }
+    } catch (error) {
+      rethrow;
+    }
   }
 }
