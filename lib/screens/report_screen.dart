@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:mood_tracker_app/screens/suggestion_screen.dart';
 import 'package:mood_tracker_app/widgets/app_bar.dart';
@@ -229,11 +230,66 @@ class _ReportScreenState extends State<ReportScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Image.asset('assets/images/bad.png', height: 48),
-              Image.asset('assets/images/poor.png', height: 48),
-              Image.asset('assets/images/medium.png', height: 48),
-              Image.asset('assets/images/good.png', height: 48),
-              Image.asset('assets/images/excellent.png', height: 48),
+              Column(
+                children: [
+                  Image.asset('assets/images/bad.png', height: 48),
+                  Text(
+                    'Bad',
+                    style: TextStyle(
+                      color: Color(0xFFE68C52),
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+              Column(
+                children: [
+                  Image.asset('assets/images/poor.png', height: 48),
+                  Text(
+                    'Poor',
+                    style: TextStyle(
+                      color: Color(0xFFE68C52),
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+              Column(
+                children: [
+                  Image.asset('assets/images/medium.png', height: 48),
+                  Text(
+                    'Medium',
+                    style: TextStyle(
+                      color: Color(0xFFE68C52),
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+              Column(
+                children: [
+                  Image.asset('assets/images/good.png', height: 48),
+                  Text(
+                    'Good',
+                    style: TextStyle(
+                      color: Color(0xFFE68C52),
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+              Column(
+                children: [
+                  Image.asset('assets/images/excellent.png', height: 48),
+                  Text(
+                    'Excellent',
+                    style: TextStyle(
+                      color: Color(0xFFE68C52),
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
           const SizedBox(height: 16),
@@ -259,9 +315,116 @@ class _ReportScreenState extends State<ReportScreen> {
               ),
             ),
           ),
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Text(
+                '${moodSummary['score_1'] ?? 0}',
+                style: TextStyle(
+                  color: Color(0xFFF64927),
+                  fontSize: 12,
+                ),
+              ),
+              Text(
+                '${moodSummary['score_2'] ?? 0}',
+                style: TextStyle(
+                  color: Color(0xFFF9C26D),
+                  fontSize: 12,
+                ),
+              ),
+              Text(
+                '${moodSummary['score_3'] ?? 0}',
+                style: TextStyle(
+                  color: Color(0xFFFFDE4B),
+                  fontSize: 12,
+                ),
+              ),
+              Text(
+                '${moodSummary['score_4'] ?? 0}',
+                style: TextStyle(
+                  color: Color(0xFFC9E23D),
+                  fontSize: 12,
+                ),
+              ),
+              Text(
+                '${moodSummary['score_5'] ?? 0}',
+                style: TextStyle(
+                  color: Color(0xFF76D650),
+                  fontSize: 12,
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
+  }
+
+  String _getMotivationalMessage(Map<String, dynamic> moodSummary) {
+    final moodCounts = [
+      moodSummary['score_1'] ?? 0,
+      moodSummary['score_2'] ?? 0,
+      moodSummary['score_3'] ?? 0,
+      moodSummary['score_4'] ?? 0,
+      moodSummary['score_5'] ?? 0,
+    ];
+
+    final totalMoods = moodCounts.reduce((a, b) => a + b);
+
+    if (totalMoods == 0) {
+      return 'No mood data available for this month. Start tracking your mood today!';
+    }
+
+    // Urutkan mood berdasarkan jumlah
+    final maxMoodCount = moodCounts.reduce((a, b) => a > b ? a : b);
+    final dominantMoods = moodCounts
+        .asMap()
+        .entries
+        .where((entry) => entry.value == maxMoodCount)
+        .map((entry) => entry.key)
+        .toList();
+
+    if (dominantMoods.length > 1) {
+      // Seri antara beberapa mood
+      final moodLabels = ['Bad', 'Poor', 'Medium', 'Good', 'Excellent'];
+      final tiedMoodNames =
+          dominantMoods.map((index) => moodLabels[index]).join(' and ');
+      return 'Your moods this month are equally balanced between $tiedMoodNames. Maintain the momentum and keep tracking!';
+    }
+
+    // Tidak seri: pilih pesan berdasarkan mood dominan
+    final messages = {
+      0: [
+        'Keep going, better days are ahead!',
+        'It’s okay to feel down sometimes. You got this!',
+        'Every day is a new beginning. Stay strong!',
+      ],
+      1: [
+        'Stay strong, you are doing great!',
+        'It’s just a rough patch. Keep pushing!',
+        'You are stronger than you think!',
+      ],
+      2: [
+        'Keep up the good work!',
+        'You are doing well, keep it up!',
+        'Stay positive and keep moving forward!',
+      ],
+      3: [
+        'You are doing amazing!',
+        'Great job! Keep the momentum going!',
+        'You are on the right track!',
+      ],
+      4: [
+        'Excellent! Keep shining!',
+        'You are a star! Keep up the great work!',
+        'Fantastic! Keep spreading positivity!',
+      ],
+    };
+
+    final random = Random();
+    final selectedMessages = messages[dominantMoods[0]]!;
+    return selectedMessages[random.nextInt(selectedMessages.length)];
   }
 
   Widget _buildMoodBarSegment(int count, int total, Color color) {
@@ -348,8 +511,28 @@ class _ReportScreenState extends State<ReportScreen> {
                 const Center(child: CircularProgressIndicator())
               else if (moodSummary == null)
                 const Center(child: Text('No data available for this month'))
-              else
+              else ...[
                 _buildHorizontalBar(moodSummary),
+                const SizedBox(
+                    height: 16), // Pemberi jarak antara Stats & Motivasi
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: Color(0xFFE68C52)),
+                  ),
+                  child: Text(
+                    _getMotivationalMessage(moodSummary),
+                    style: TextStyle(
+                      color: Color(0xFFE68C52),
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
             ],
           ),
         ),

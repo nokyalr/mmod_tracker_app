@@ -131,6 +131,51 @@ class PostProvider with ChangeNotifier {
     }
   }
 
+  Future<void> searchPosts(String query, int userId) async {
+    final url =
+        '${APIConfig.postsUrl}?action=search_posts&query=$query&user_id=$userId';
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body) as List<dynamic>;
+        _posts = data.map((item) => item as Map<String, dynamic>).toList();
+      } else {
+        throw Exception('Failed to search posts');
+      }
+    } catch (error) {
+      rethrow;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> fetchPostsByStatus(int userId, int isPosted) async {
+    final url =
+        '${APIConfig.postsUrl}?action=get_posts_by_status&user_id=$userId&is_posted=$isPosted';
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        _posts = List<Map<String, dynamic>>.from(json.decode(response.body));
+      } else {
+        throw Exception('Failed to load posts');
+      }
+    } catch (error) {
+      rethrow;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   // Clear all posts from local state
   void clearPosts() {
     _posts = [];
