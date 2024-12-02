@@ -77,6 +77,60 @@ class PostProvider with ChangeNotifier {
     }
   }
 
+  Future<bool> updatePost({
+    required int postId,
+    required String content,
+    required int moodScore,
+    required int userId,
+  }) async {
+    final url = '${APIConfig.postsUrl}?action=update_post';
+
+    final Map<String, dynamic> postData = {
+      'post_id': postId,
+      'content': content,
+      'mood_score': moodScore,
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(postData),
+      );
+
+      if (response.statusCode == 200) {
+        await fetchPosts(userId);
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      return false;
+    }
+  }
+
+  Future<bool> removePost(int postId) async {
+    final url = '${APIConfig.postsUrl}?action=delete_post';
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({'post_id': postId}),
+      );
+
+      if (response.statusCode == 200) {
+        _posts.removeWhere((post) => post['post_id'] == postId);
+        notifyListeners();
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      return false;
+    }
+  }
+
   // Clear all posts from local state
   void clearPosts() {
     _posts = [];

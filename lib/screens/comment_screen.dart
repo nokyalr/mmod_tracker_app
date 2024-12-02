@@ -56,6 +56,52 @@ class CommentScreenState extends State<CommentScreen> {
     }
   }
 
+  Future<void> _showEditRemoveDialog(BuildContext context) async {
+    final postProvider = Provider.of<PostProvider>(context, listen: false);
+    final userId =
+        Provider.of<UserProvider>(context, listen: false).user?['user_id'];
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Choose an action'),
+          content: const Text('Do you want to edit or remove this post?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                // Navigate to edit screen (implement edit functionality here)
+              },
+              child: const Text('Edit'),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                if (userId != null) {
+                  final success =
+                      await postProvider.removePost(widget.post['post_id']);
+                  if (success) {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('Post deleted successfully')),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Failed to remove post')),
+                    );
+                  }
+                }
+              },
+              child: const Text('Remove'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final TextEditingController commentController = TextEditingController();
@@ -243,6 +289,13 @@ class CommentScreenState extends State<CommentScreen> {
           ],
         ),
       ),
+      floatingActionButton: userId == widget.post['user_id']
+          ? FloatingActionButton(
+              onPressed: () => _showEditRemoveDialog(context),
+              backgroundColor: const Color(0xFFE68C52),
+              child: const Icon(Icons.edit, size: 36, color: Colors.white),
+            )
+          : null,
     );
   }
 }
