@@ -200,6 +200,14 @@ class CommentScreenState extends State<CommentScreen> {
                       ),
                       const SizedBox(height: 8),
                       Text(
+                        widget
+                            .post['mood_category'], // Display the sub mood here
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12,
+                        ),
+                      ),
+                      Text(
                         widget.post['date'] ?? 'Unknown Date',
                         style:
                             TextStyle(fontSize: 12, color: Color(0xFFA6A6A6)),
