@@ -79,16 +79,25 @@ class PostProvider with ChangeNotifier {
 
   Future<bool> updatePost({
     required int postId,
-    required String content,
-    required int moodScore,
     required int userId,
+    required int moodId,
+    required int moodScore,
+    required String content,
+    required bool isPosted,
+    required String postDate,
+    required String updatedAt,
   }) async {
     final url = '${APIConfig.postsUrl}?action=update_post';
 
     final Map<String, dynamic> postData = {
       'post_id': postId,
-      'content': content,
+      'user_id': userId,
+      'mood_id': moodId,
       'mood_score': moodScore,
+      'content': content,
+      'is_posted': isPosted ? 1 : 0, // Convert boolean to integer (1 or 0)
+      'post_date': postDate,
+      'updated_at': updatedAt,
     };
 
     try {

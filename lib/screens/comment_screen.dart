@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mood_tracker_app/screens/edit_post_screen.dart';
 import 'package:mood_tracker_app/widgets/text_field.dart';
 import 'package:provider/provider.dart';
 import 'package:mood_tracker_app/providers/post_provider.dart';
@@ -56,12 +57,11 @@ class CommentScreenState extends State<CommentScreen> {
     }
   }
 
-  Future<void> _showEditRemoveDialog(BuildContext context) async {
-    final postProvider = Provider.of<PostProvider>(context, listen: false);
+  void _showEditRemoveDialog(BuildContext context) async {
     final userId =
         Provider.of<UserProvider>(context, listen: false).user?['user_id'];
 
-    showDialog(
+    final action = await showDialog<String>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -70,36 +70,48 @@ class CommentScreenState extends State<CommentScreen> {
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop();
-                // Navigate to edit screen (implement edit functionality here)
+                showDialog(
+                  context: context,
+                  builder: (context) => Dialog(
+                    insetPadding: const EdgeInsets.all(16),
+                    child: SingleChildScrollView(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxHeight: MediaQuery.of(context).size.height * 0.5,
+                        ),
+                        child: EditPostScreen(post: widget.post),
+                      ),
+                    ),
+                  ),
+                );
               },
-              child: const Text('Edit'),
+              child: const Text('Edit',
+                  style: TextStyle(color: Color(0xFFE68C52))),
             ),
             TextButton(
-              onPressed: () async {
-                Navigator.of(context).pop();
-                if (userId != null) {
-                  final success =
-                      await postProvider.removePost(widget.post['post_id']);
-                  if (success) {
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('Post deleted successfully')),
-                    );
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Failed to remove post')),
-                    );
-                  }
-                }
-              },
-              child: const Text('Remove'),
+              onPressed: () => Navigator.pop(context, 'remove'),
+              child: const Text('Remove',
+                  style: TextStyle(color: Color(0xFFE68C52))),
             ),
           ],
         );
       },
     );
+
+    if (action == 'remove' && userId != null) {
+      final success = await Provider.of<PostProvider>(context, listen: false)
+          .removePost(widget.post['post_id']);
+      if (success) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Post deleted successfully')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to remove post')),
+        );
+      }
+    }
   }
 
   @override
@@ -291,7 +303,9 @@ class CommentScreenState extends State<CommentScreen> {
       ),
       floatingActionButton: userId == widget.post['user_id']
           ? FloatingActionButton(
-              onPressed: () => _showEditRemoveDialog(context),
+              onPressed: () {
+                _showEditRemoveDialog(context);
+              },
               backgroundColor: const Color(0xFFE68C52),
               child: const Icon(Icons.edit, size: 36, color: Colors.white),
             )
